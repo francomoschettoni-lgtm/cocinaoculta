@@ -98,13 +98,14 @@ export async function sendOrderEmail(order: OrderInfo) {
   })
 }
 
-// ── WhatsApp (CallMeBot) ────────────────────────────────────────
+// ── WhatsApp (UltraMsg) ─────────────────────────────────────────
 export async function sendOrderWhatsApp(order: OrderInfo) {
+  const instance = process.env.ULTRAMSG_INSTANCE
+  const token = process.env.ULTRAMSG_TOKEN
   const phone = process.env.WHATSAPP_NOTIFY_PHONE
-  const apiKey = process.env.CALLMEBOT_API_KEY
 
-  if (!phone || !apiKey) {
-    console.warn('[WhatsApp] WHATSAPP_NOTIFY_PHONE o CALLMEBOT_API_KEY no configurados')
+  if (!instance || !token || !phone) {
+    console.warn('[WhatsApp] ULTRAMSG_INSTANCE, ULTRAMSG_TOKEN o WHATSAPP_NOTIFY_PHONE no configurados')
     return
   }
 
@@ -124,8 +125,11 @@ export async function sendOrderWhatsApp(order: OrderInfo) {
     order.notes ? `📝 ${order.notes}` : '',
   ].filter(Boolean).join('\n')
 
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(phone)}&text=${encodeURIComponent(msg)}&apikey=${apiKey}`
+  const res = await fetch(`https://api.ultramsg.com/${instance}/messages/chat`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ token, to: phone, body: msg }),
+  })
 
-  const res = await fetch(url)
-  if (!res.ok) console.warn('[WhatsApp] Error al enviar:', await res.text())
+  if (!res.ok) console.warn('[WhatsApp] Error UltraMsg:', await res.text())
 }
