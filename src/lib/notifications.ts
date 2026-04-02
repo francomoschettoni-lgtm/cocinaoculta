@@ -98,14 +98,14 @@ export async function sendOrderEmail(order: OrderInfo) {
   })
 }
 
-// ── WhatsApp (UltraMsg) ─────────────────────────────────────────
+// ── WhatsApp (Green API — gratis hasta 500 msg/mes) ─────────────
 export async function sendOrderWhatsApp(order: OrderInfo) {
-  const instance = process.env.ULTRAMSG_INSTANCE
-  const token = process.env.ULTRAMSG_TOKEN
-  const phone = process.env.WHATSAPP_NOTIFY_PHONE
+  const instanceId = process.env.GREEN_API_INSTANCE_ID
+  const instanceToken = process.env.GREEN_API_TOKEN
+  const phone = process.env.WHATSAPP_NOTIFY_PHONE // ej: 5491153447998
 
-  if (!instance || !token || !phone) {
-    console.warn('[WhatsApp] ULTRAMSG_INSTANCE, ULTRAMSG_TOKEN o WHATSAPP_NOTIFY_PHONE no configurados')
+  if (!instanceId || !instanceToken || !phone) {
+    console.warn('[WhatsApp] GREEN_API_INSTANCE_ID, GREEN_API_TOKEN o WHATSAPP_NOTIFY_PHONE no configurados')
     return
   }
 
@@ -125,11 +125,17 @@ export async function sendOrderWhatsApp(order: OrderInfo) {
     order.notes ? `📝 ${order.notes}` : '',
   ].filter(Boolean).join('\n')
 
-  const res = await fetch(`https://api.ultramsg.com/${instance}/messages/chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({ token, to: phone, body: msg }),
-  })
+  // chatId format: phone number + @c.us
+  const chatId = `${phone}@c.us`
 
-  if (!res.ok) console.warn('[WhatsApp] Error UltraMsg:', await res.text())
+  const res = await fetch(
+    `https://api.green-api.com/waInstance${instanceId}/sendMessage/${instanceToken}`,
+    {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ chatId, message: msg }),
+    }
+  )
+
+  if (!res.ok) console.warn('[WhatsApp] Error Green API:', await res.text())
 }
