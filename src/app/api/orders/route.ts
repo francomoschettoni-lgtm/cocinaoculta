@@ -89,13 +89,11 @@ export async function POST(req: NextRequest) {
         })
       } catch (mpError) {
         console.error('[MP Error]', mpError)
-        // Order was created — return success without MP redirect
         return NextResponse.json({
-          success: true,
+          error: 'No se pudo conectar con MercadoPago. Probá con otro método de pago o intentá de nuevo.',
           order_id: order.id,
           order_number: order.order_number,
-          mp_error: true,
-        })
+        }, { status: 502 })
       }
     }
 
