@@ -82,7 +82,7 @@ export default function AdminLogin() {
             style={{ margin: '0 auto 18px', display: 'block' }}
           />
           <h1 style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: 'Lora, serif',
             fontSize: '1.6rem', fontWeight: 700,
             color: 'rgba(255,255,255,0.92)',
             letterSpacing: '0.01em',
@@ -116,7 +116,7 @@ export default function AdminLogin() {
                 border: '1px solid rgba(255,255,255,0.1)',
                 borderRadius: '11px',
                 color: 'rgba(255,255,255,0.88)', fontSize: '0.9rem',
-                outline: 'none', fontFamily: 'DM Sans, sans-serif',
+                outline: 'none', fontFamily: 'Inter, sans-serif',
               }}
             />
           </div>
@@ -143,7 +143,7 @@ export default function AdminLogin() {
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: '11px',
                   color: 'rgba(255,255,255,0.88)', fontSize: '0.9rem',
-                  outline: 'none', fontFamily: 'DM Sans, sans-serif',
+                  outline: 'none', fontFamily: 'Inter, sans-serif',
                 }}
               />
               <button
@@ -182,7 +182,7 @@ export default function AdminLogin() {
               border: 'none', borderRadius: '12px',
               fontSize: '0.93rem', fontWeight: 600,
               cursor: loading ? 'not-allowed' : 'pointer',
-              fontFamily: 'DM Sans, sans-serif',
+              fontFamily: 'Inter, sans-serif',
               letterSpacing: '0.02em',
               transition: 'background-color 0.2s',
             }}

@@ -22,18 +22,19 @@ export default function ProductCard({ product }: { product: Product }) {
       border: '1px solid var(--border)',
       borderRadius: '16px',
       overflow: 'hidden',
-      transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
       position: 'relative',
+      boxShadow: '0 4px 16px rgba(0,0,0,0.06)',
     }}
     onMouseEnter={e => {
       const el = e.currentTarget as HTMLDivElement
-      el.style.transform = 'translateY(-4px)'
-      el.style.boxShadow = 'var(--shadow-lg)'
+      el.style.transform = 'translateY(-6px)'
+      el.style.boxShadow = '0 20px 50px rgba(0,0,0,0.14), 0 8px 20px rgba(0,0,0,0.08)'
     }}
     onMouseLeave={e => {
       const el = e.currentTarget as HTMLDivElement
       el.style.transform = 'translateY(0)'
-      el.style.boxShadow = 'none'
+      el.style.boxShadow = '0 4px 16px rgba(0,0,0,0.06)'
     }}
     >
       {/* Image */}

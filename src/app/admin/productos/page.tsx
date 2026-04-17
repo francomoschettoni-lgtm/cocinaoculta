@@ -18,6 +18,7 @@ const CATEGORIES = [
   { value: 'nueces-pecan', label: 'Nueces Pecan' },
   { value: 'guarniciones', label: 'Guarniciones' },
   { value: 'salsas', label: 'Salsas' },
+  { value: 'barf-perros', label: 'BARF Perros' },
 ]
 
 const EMPTY_FORM = {
@@ -317,7 +318,7 @@ export default function ProductosAdmin() {
             zIndex: 201, boxShadow: 'var(--shadow-lg)',
           }} className="animate-scale-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.2rem', color: 'var(--text)' }}>
+              <h2 style={{ fontFamily: 'Lora, serif', fontSize: '1.2rem', color: 'var(--text)' }}>
                 {editing ? 'Editar producto' : 'Nuevo producto'}
               </h2>
               <button onClick={() => setShowModal(false)} style={{

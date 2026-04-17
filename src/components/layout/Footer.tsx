@@ -6,8 +6,6 @@ import { MessageCircle, MapPin } from 'lucide-react'
 export default function Footer() {
   return (
     <footer style={{
-      borderTop: '1px solid var(--border)',
-      backgroundColor: 'var(--bg-secondary)',
       paddingTop: '48px',
       paddingBottom: '32px',
     }}>

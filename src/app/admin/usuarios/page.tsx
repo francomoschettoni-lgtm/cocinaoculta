@@ -94,7 +94,7 @@ export default function UsuariosAdmin() {
 
         {/* Header */}
         <div style={{ marginBottom: '32px' }}>
-          <h1 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.7rem', fontWeight: 700, color: 'var(--text)' }}>
+          <h1 style={{ fontFamily: 'Lora, serif', fontSize: '1.7rem', fontWeight: 700, color: 'var(--text)' }}>
             Usuarios
           </h1>
           <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>
@@ -111,7 +111,7 @@ export default function UsuariosAdmin() {
           marginBottom: '28px',
         }}>
           <h2 style={{
-            fontFamily: 'Cormorant Garamond, serif',
+            fontFamily: 'Lora, serif',
             fontSize: '1.1rem', fontWeight: 600,
             color: 'var(--text)', marginBottom: '16px',
             display: 'flex', alignItems: 'center', gap: '8px',
@@ -140,7 +140,7 @@ export default function UsuariosAdmin() {
                   border: '1px solid var(--border)',
                   borderRadius: '10px',
                   color: 'var(--text)', fontSize: '0.9rem',
-                  outline: 'none', fontFamily: 'DM Sans, sans-serif',
+                  outline: 'none', fontFamily: 'Inter, sans-serif',
                 }}
               />
             </div>
@@ -155,7 +155,7 @@ export default function UsuariosAdmin() {
                 fontWeight: 600, fontSize: '0.9rem',
                 cursor: inviting ? 'not-allowed' : 'pointer',
                 display: 'flex', alignItems: 'center', gap: '7px',
-                fontFamily: 'DM Sans, sans-serif',
+                fontFamily: 'Inter, sans-serif',
                 flexShrink: 0,
               }}
             >
@@ -208,7 +208,7 @@ export default function UsuariosAdmin() {
                     width: '38px', height: '38px', borderRadius: '50%',
                     backgroundColor: 'var(--accent-light)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    color: 'var(--accent)', fontFamily: 'Cormorant Garamond, serif',
+                    color: 'var(--accent)', fontFamily: 'Lora, serif',
                     fontWeight: 700, fontSize: '1rem', flexShrink: 0,
                   }}>
                     {user.email[0].toUpperCase()}

@@ -21,7 +21,7 @@ function ExitoContent() {
       }}>
         <CheckCircle size={56} style={{ color: 'var(--accent)', margin: '0 auto 20px', display: 'block' }} />
         <h2 style={{
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: 'Lora, serif',
           fontSize: '1.8rem', color: 'var(--text)', marginBottom: '12px',
         }}>
           {pending ? 'Pago en proceso' : 'Pago recibido'}

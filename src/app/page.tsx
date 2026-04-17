@@ -1,11 +1,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Clock, Leaf, MapPin, Package, MessageCircle, Phone } from 'lucide-react'
+import { ArrowRight, Clock, Leaf, MapPin, Package, MessageCircle, Phone, Heart } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/types'
 import ProductCard from '@/components/store/ProductCard'
 import StoreMap from '@/components/map/StoreMapClient'
-import InstagramSection from '@/components/home/InstagramSection'
 
 async function getFeaturedProducts(): Promise<Product[]> {
   try {
@@ -71,7 +70,7 @@ export default async function HomePage() {
               </div>
 
               <h1 style={{
-                fontFamily: 'Cormorant Garamond, serif',
+                fontFamily: 'Lora, serif',
                 fontSize: 'clamp(2.8rem, 5.5vw, 4.8rem)',
                 fontWeight: 700, color: '#F5F0E8',
                 lineHeight: 1.05, marginBottom: '22px',
@@ -132,7 +131,7 @@ export default async function HomePage() {
                     paddingLeft: i > 0 ? '20px' : '0',
                   }}>
                     <p style={{
-                      fontFamily: 'Cormorant Garamond, serif',
+                      fontFamily: 'Lora, serif',
                       fontSize: '1.1rem', fontWeight: 700,
                       color: '#F5F0E8', lineHeight: 1.1, marginBottom: '3px',
                     }}>{value}</p>
@@ -177,7 +176,7 @@ export default async function HomePage() {
                   animationDelay: delay,
                   maxWidth: '170px',
                 }}>
-                  <p style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '0.98rem', fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{label}</p>
+                  <p style={{ fontFamily: 'Lora, serif', fontSize: '0.98rem', fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{label}</p>
                   <p style={{ fontSize: '0.7rem', color: accent ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.5)', marginTop: '3px' }}>{sub}</p>
                 </div>
               ))}
@@ -200,10 +199,7 @@ export default async function HomePage() {
 
       {/* ── Features strip ───────────────────────────── */}
       <section style={{
-        backgroundColor: 'var(--bg-secondary)',
         padding: '52px 24px',
-        borderTop: '1px solid var(--border)',
-        borderBottom: '1px solid var(--border)',
       }}>
         <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '20px' }}>
@@ -213,7 +209,7 @@ export default async function HomePage() {
               { icon: <Leaf size={20} />, title: 'Sin conservantes', desc: 'Solo ingredientes frescos' },
               { icon: <MapPin size={20} />, title: 'Envíos locales', desc: 'Tigre, San Isidro, Escobar' },
             ].map(({ icon, title, desc }) => (
-              <div key={title} style={{
+              <div key={title} className="card-lift" style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
                 textAlign: 'center', gap: '10px', padding: '22px 16px',
                 borderRadius: '14px', backgroundColor: 'var(--bg-card)', border: '1px solid var(--border)',
@@ -221,7 +217,7 @@ export default async function HomePage() {
                 <div style={{ width: '46px', height: '46px', borderRadius: '12px', backgroundColor: 'var(--accent-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
                   {icon}
                 </div>
-                <h3 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: '1.05rem', fontWeight: 600, color: 'var(--text)' }}>{title}</h3>
+                <h3 style={{ fontFamily: 'Lora, serif', fontSize: '1.05rem', fontWeight: 600, color: 'var(--text)' }}>{title}</h3>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', lineHeight: 1.5 }}>{desc}</p>
               </div>
             ))}
@@ -235,7 +231,7 @@ export default async function HomePage() {
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '44px' }}>
               <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Destacados</span>
-              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700, color: 'var(--text)', marginTop: '6px' }}>
+              <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700, color: 'var(--text)', marginTop: '6px' }}>
                 Nuestros favoritos
               </h2>
             </div>
@@ -255,14 +251,101 @@ export default async function HomePage() {
         </section>
       )}
 
+      {/* ── BARF Promo ────────────────────────────────── */}
+      <section style={{
+        padding: '80px 24px',
+      }}>
+        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+          <div className="barf-promo-grid" style={{
+            display: 'grid', gridTemplateColumns: '1fr 1fr',
+            gap: '60px', alignItems: 'center',
+          }}>
+            {/* Image */}
+            <div className="img-lift" style={{
+              borderRadius: '20px', overflow: 'hidden',
+              position: 'relative', height: '380px',
+            }}>
+              <Image
+                src="/barf-corgi.png"
+                alt="Perro saludable con dieta BARF"
+                fill
+                style={{ objectFit: 'cover' }}
+              />
+            </div>
+
+            {/* Text */}
+            <div>
+              <div style={{
+                display: 'inline-flex', alignItems: 'center', gap: '6px',
+                backgroundColor: 'var(--accent-light)', border: '1px solid var(--accent)',
+                borderRadius: '20px', padding: '5px 14px', marginBottom: '16px',
+              }}>
+                <Heart size={12} style={{ color: 'var(--accent)' }} />
+                <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.04em' }}>
+                  NUEVO · BARF para perros
+                </span>
+              </div>
+
+              <h2 style={{
+                fontFamily: 'Lora, serif',
+                fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 700,
+                color: 'var(--text)', marginBottom: '16px', lineHeight: 1.1,
+              }}>
+                Alimento crudo,{' '}
+                <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>biológicamente apropiado</em>
+              </h2>
+
+              <p style={{
+                color: 'var(--text-muted)', lineHeight: 1.75, fontSize: '0.95rem',
+                marginBottom: '24px', maxWidth: '440px',
+              }}>
+                La dieta BARF devuelve a tu perro la nutrición natural que merece.
+                50% carne de res, 20% menudos, 20% verduras y 10% frutas de estación.
+              </p>
+
+              <div style={{ display: 'flex', gap: '16px', marginBottom: '28px', flexWrap: 'wrap' }}>
+                {[
+                  { value: '100%', label: 'Natural' },
+                  { value: 'Sin', label: 'Conservantes' },
+                  { value: '$20.000', label: '500g' },
+                ].map(({ value, label }, i) => (
+                  <div key={i} style={{
+                    padding: '10px 16px', backgroundColor: 'var(--bg-card)',
+                    border: '1px solid var(--border)', borderRadius: '12px',
+                    textAlign: 'center', minWidth: '80px',
+                  }}>
+                    <p style={{
+                      fontFamily: 'Lora, serif',
+                      fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent)',
+                    }}>{value}</p>
+                    <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{label}</p>
+                  </div>
+                ))}
+              </div>
+
+              <Link href="/barf" style={{
+                display: 'inline-flex', alignItems: 'center', gap: '8px',
+                padding: '12px 24px',
+                backgroundColor: 'var(--accent)', color: 'white',
+                borderRadius: '10px', textDecoration: 'none',
+                fontWeight: 600, fontSize: '0.9rem',
+                boxShadow: '0 4px 16px rgba(45,122,79,0.4)',
+              }}>
+                Conocer BARF <ArrowRight size={15} />
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── About ────────────────────────────────────── */}
-      <section id="nosotros" style={{ padding: '80px 24px', backgroundColor: 'var(--bg-secondary)', borderTop: '1px solid var(--border)', position: 'relative', overflow: 'hidden' }}>
+      <section id="nosotros" style={{ padding: '80px 24px', position: 'relative', overflow: 'hidden' }}>
         <svg viewBox="0 0 200 300" style={{ position: 'absolute', right: '-40px', top: '0', height: '100%', opacity: 0.04, pointerEvents: 'none', color: 'var(--accent)' }} fill="currentColor">
           <path d="M160 10 C180 60, 200 120, 140 180 C100 220, 40 230, 20 290 C60 250, 80 200, 100 160 C120 120, 130 70, 160 10Z" />
         </svg>
         <div style={{ maxWidth: '600px', margin: '0 auto', textAlign: 'center', position: 'relative' }}>
           <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Nuestra historia</span>
-          <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700, color: 'var(--text)', margin: '10px 0 20px' }}>
+          <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700, color: 'var(--text)', margin: '10px 0 20px' }}>
             Cocina hecha con intención
           </h2>
           <p style={{ color: 'var(--text-muted)', lineHeight: 1.85, fontSize: '1rem', marginBottom: '16px' }}>
@@ -274,8 +357,6 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Instagram ────────────────────────────────── */}
-      <InstagramSection />
 
       {/* ── Map & Contact ─────────────────────────────── */}
       <section id="contacto" style={{ padding: '80px 24px' }}>
@@ -285,7 +366,7 @@ export default async function HomePage() {
             {/* Info left */}
             <div>
               <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Dónde estamos</span>
-              <h2 style={{ fontFamily: 'Cormorant Garamond, serif', fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 700, color: 'var(--text)', margin: '10px 0 22px' }}>
+              <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(1.8rem, 3vw, 2.5rem)', fontWeight: 700, color: 'var(--text)', margin: '10px 0 22px' }}>
                 Puertos Escobar
               </h2>
 

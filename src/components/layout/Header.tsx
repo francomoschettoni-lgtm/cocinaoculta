@@ -10,6 +10,7 @@ import { useCartStore } from '@/store/cart'
 const NAV_LINKS = [
   { href: '/', label: 'Inicio' },
   { href: '/tienda', label: 'Tienda' },
+  { href: '/barf', label: 'BARF Perros' },
   { href: '/#nosotros', label: 'Nosotros' },
   { href: '/#contacto', label: 'Contacto' },
 ]
@@ -31,7 +32,6 @@ export default function Header() {
       <header style={{
         position: 'sticky', top: 0, zIndex: 100,
         backgroundColor: 'var(--bg)',
-        borderBottom: '1px solid var(--border)',
         backdropFilter: 'blur(12px)',
         WebkitBackdropFilter: 'blur(12px)',
       }}>
@@ -50,7 +50,7 @@ export default function Header() {
               style={{ objectFit: 'contain' }}
             />
             <span style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: 'Lora, serif',
               fontSize: '1.15rem', fontWeight: 700,
               color: 'var(--text)', letterSpacing: '0.02em',
             }}>
@@ -178,7 +178,7 @@ export default function Header() {
                   borderRadius: '11px',
                   textDecoration: 'none',
                   color: 'var(--text)',
-                  fontFamily: 'DM Sans, sans-serif',
+                  fontFamily: 'Inter, sans-serif',
                   fontSize: '1rem', fontWeight: 500,
                   transition: 'background 0.15s',
                 }}
@@ -238,13 +238,23 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       style={{
         textDecoration: 'none',
         color: 'var(--text-muted)',
-        fontFamily: 'DM Sans, sans-serif',
+        fontFamily: 'Inter, sans-serif',
         fontSize: '0.88rem', fontWeight: 500,
         letterSpacing: '0.01em',
-        transition: 'color 0.2s',
+        padding: '6px 12px',
+        borderRadius: '8px',
+        transition: 'all 0.2s ease',
       }}
-      onMouseEnter={e => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text)'}
-      onMouseLeave={e => (e.currentTarget as HTMLAnchorElement).style.color = 'var(--text-muted)'}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLAnchorElement
+        el.style.color = 'var(--accent)'
+        el.style.backgroundColor = 'var(--accent-light)'
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLAnchorElement
+        el.style.color = 'var(--text-muted)'
+        el.style.backgroundColor = 'transparent'
+      }}
     >
       {children}
     </Link>

@@ -16,50 +16,21 @@ const IgIcon = () => (
 )
 
 const POSTS = [
-  {
-    id: 1,
-    bg: 'linear-gradient(145deg, #0c1e14 0%, #1a4028 55%, #102a1c 100%)',
-    accent: 'rgba(74,173,114,0.25)',
-    tag: 'Guisos de temporada',
-  },
-  {
-    id: 2,
-    bg: 'linear-gradient(145deg, #1e0d06 0%, #4a2210 55%, #2e1408 100%)',
-    accent: 'rgba(180,100,40,0.2)',
-    tag: 'Cazuelas artesanales',
-  },
-  {
-    id: 3,
-    bg: 'linear-gradient(145deg, #0e2218 0%, #235a34 55%, #142e20 100%)',
-    accent: 'rgba(60,160,90,0.2)',
-    tag: 'Sellado al vacío',
-  },
-  {
-    id: 4,
-    bg: 'linear-gradient(145deg, #1a200c 0%, #3a4e18 55%, #232c10 100%)',
-    accent: 'rgba(120,160,50,0.2)',
-    tag: 'Ingredientes frescos',
-  },
-  {
-    id: 5,
-    bg: 'linear-gradient(145deg, #200e06 0%, #4e2812 55%, #321808 100%)',
-    accent: 'rgba(160,90,30,0.2)',
-    tag: 'Cocina de autor',
-  },
-  {
-    id: 6,
-    bg: 'linear-gradient(145deg, #0c1820 0%, #1e3e54 55%, #101f2e 100%)',
-    accent: 'rgba(50,120,160,0.2)',
-    tag: 'Proceso artesanal',
-  },
+  { id: 1, url: 'https://www.instagram.com/p/DRCj_H0DX2q/', tag: 'Cocina Oculta' },
+  { id: 2, url: 'https://www.instagram.com/p/DOJAOHpERs_/', tag: 'Recetas caseras' },
+  { id: 3, url: 'https://www.instagram.com/p/DOE1S25iRtT/', tag: 'Sellado al vacío' },
+  { id: 4, url: 'https://www.instagram.com/p/DLfyIOHyJtR/', tag: 'Ingredientes frescos' },
+  { id: 5, url: 'https://www.instagram.com/p/DMq9qy1JEgk/', tag: 'Cocina de autor' },
+  { id: 6, url: 'https://www.instagram.com/p/DK-Xk3KSiAl/', tag: 'Proceso artesanal' },
 ]
 
 function PostCard({ post }: { post: typeof POSTS[0] }) {
   const [hovered, setHovered] = useState(false)
+  const embedUrl = post.url + 'embed'
 
   return (
     <a
-      href={IG_URL}
+      href={post.url}
       target="_blank"
       rel="noopener noreferrer"
       onMouseEnter={() => setHovered(true)}
@@ -70,36 +41,28 @@ function PostCard({ post }: { post: typeof POSTS[0] }) {
         aspectRatio: '1 / 1',
         borderRadius: '14px',
         overflow: 'hidden',
-        background: post.bg,
+        backgroundColor: 'var(--bg-card)',
+        border: '1px solid var(--border)',
         textDecoration: 'none',
         cursor: 'pointer',
         transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-        transform: hovered ? 'scale(1.02)' : 'scale(1)',
-        boxShadow: hovered ? '0 12px 40px rgba(0,0,0,0.4)' : '0 4px 16px rgba(0,0,0,0.2)',
+        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
+        boxShadow: hovered
+          ? '0 20px 50px rgba(0,0,0,0.14), 0 8px 20px rgba(0,0,0,0.08)'
+          : '0 4px 16px rgba(0,0,0,0.06)',
       }}
     >
-      {/* Texture pattern */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        backgroundImage: `radial-gradient(${post.accent} 1px, transparent 1px)`,
-        backgroundSize: '18px 18px',
-        opacity: 0.6,
-      }} />
-
-      {/* Organic shape overlay */}
-      <svg
-        viewBox="0 0 200 200"
+      <iframe
+        src={embedUrl}
         style={{
-          position: 'absolute', bottom: '-20px', right: '-20px',
-          width: '120px', height: '120px',
-          opacity: 0.08,
-          transition: 'opacity 0.3s ease, transform 0.3s ease',
-          transform: hovered ? 'scale(1.1) rotate(10deg)' : 'scale(1)',
+          width: '100%', height: '100%', border: 'none',
+          pointerEvents: 'none',
+          transform: 'scale(1.5)',
+          transformOrigin: 'top center',
         }}
-        fill="white"
-      >
-        <path d="M160 10 C180 60, 200 120, 140 180 C100 220, 40 230, 20 290 C60 250, 80 200, 100 160 C120 120, 130 70, 160 10Z" />
-      </svg>
+        loading="lazy"
+        title={post.tag}
+      />
 
       {/* Hover overlay */}
       <div style={{
@@ -157,8 +120,6 @@ export default function InstagramSection() {
   return (
     <section style={{
       padding: '90px 24px',
-      background: 'var(--bg)',
-      borderTop: '1px solid var(--border)',
     }}>
       <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
 
@@ -189,7 +150,7 @@ export default function InstagramSection() {
             </div>
 
             <h2 style={{
-              fontFamily: 'Cormorant Garamond, serif',
+              fontFamily: 'Lora, serif',
               fontSize: 'clamp(1.9rem, 3.5vw, 2.7rem)',
               fontWeight: 700, color: 'var(--text)',
               lineHeight: 1.1, margin: 0,

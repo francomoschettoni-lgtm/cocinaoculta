@@ -77,7 +77,7 @@ export default function StoreMap() {
       L.marker([LAT, LNG], { icon: customIcon })
         .addTo(map)
         .bindPopup(`
-          <div style="font-family:'DM Sans',sans-serif; padding:6px 2px; min-width:160px;">
+          <div style="font-family:'Inter',sans-serif; padding:6px 2px; min-width:160px;">
             <strong style="font-size:0.9rem;">Cocina Oculta</strong><br>
             <span style="color:#6B7269; font-size:0.78rem; line-height:1.5; display:block; margin-top:4px;">
               Av. del Navegante 1600<br>Puertos Escobar, Buenos Aires

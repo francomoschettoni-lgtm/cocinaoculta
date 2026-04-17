@@ -1,9 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-serif: 'Cormorant Garamond', Georgia, serif;
-  --font-sans: 'DM Sans', system-ui, sans-serif;
+  --font-serif: 'Lora', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
 
   --color-accent: #2D7A4F;
   --color-accent-hover: #1E5E3A;
@@ -15,6 +15,9 @@
   --bg-secondary: #F0EDE6;
   --bg-card: #FFFFFF;
   --border: #E4DDD2;
+  --nature-blob-1: rgba(45,122,79,0.09);
+  --nature-blob-2: rgba(74,160,100,0.07);
+  --nature-blob-3: rgba(100,180,120,0.05);
   --text: #1A1F1C;
   --text-muted: #6B7269;
   --accent: #2D7A4F;
@@ -34,6 +37,9 @@
   --accent: #4AAD72;
   --accent-hover: #5DC485;
   --accent-light: #162A1E;
+  --nature-blob-1: rgba(74,173,114,0.06);
+  --nature-blob-2: rgba(93,196,133,0.04);
+  --nature-blob-3: rgba(74,173,114,0.03);
   --shadow: 0 4px 24px rgba(0,0,0,0.4);
   --shadow-lg: 0 8px 48px rgba(0,0,0,0.6);
 }
@@ -43,15 +49,23 @@ html { scroll-behavior: smooth; }
 
 body {
   background-color: var(--bg);
+  background-image:
+    radial-gradient(ellipse 500px 600px at 5% 8%, var(--nature-blob-1) 0%, transparent 100%),
+    radial-gradient(ellipse 400px 350px at 92% 15%, var(--nature-blob-2) 0%, transparent 100%),
+    radial-gradient(ellipse 350px 500px at 80% 55%, var(--nature-blob-1) 0%, transparent 100%),
+    radial-gradient(ellipse 600px 400px at 15% 75%, var(--nature-blob-2) 0%, transparent 100%),
+    radial-gradient(ellipse 300px 300px at 50% 40%, var(--nature-blob-3) 0%, transparent 100%),
+    url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 35c-3-8-12-10-12-4s5 8 8 7c-6 2-8 10-3 10s7-5 7-8c1 6 6 10 9 6s0-9-4-10c5 1 11-2 9-7s-10-2-11 3' fill='none' stroke='rgba(45,122,79,0.07)' stroke-width='0.8'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 200px 200px;
   color: var(--text);
-  font-family: 'DM Sans', sans-serif;
+  font-family: 'Inter', sans-serif;
   font-weight: 400;
   line-height: 1.6;
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 h1, h2, h3, h4 {
-  font-family: 'Cormorant Garamond', serif;
+  font-family: 'Lora', serif;
   line-height: 1.15;
 }
 
@@ -68,27 +82,38 @@ h1, h2, h3, h4 {
     grid-template-columns: 1fr !important;
     gap: 32px !important;
   }
-  /* Admin login: hide image panel on mobile */
   .admin-login-image {
     display: none !important;
   }
+  .barf-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
+  .barf-hero-visual {
+    display: none !important;
+  }
+  .barf-promo-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+  .barf-benefits-grid {
+    grid-template-columns: 1fr !important;
+    gap: 40px !important;
+  }
 }
 
-/* Show admin image panel on desktop */
 @media (min-width: 769px) {
   .admin-login-image {
     display: block !important;
   }
 }
 
-/* Instagram grid — 2 cols on small mobile */
 @media (max-width: 480px) {
   .instagram-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
 }
 
-/* Admin table horizontal scroll on mobile */
 @media (max-width: 900px) {
   .admin-table-wrap {
     overflow-x: auto;
@@ -136,6 +161,24 @@ h1, h2, h3, h4 {
 .stagger-children > *:nth-child(6) { animation-delay: 0.3s; }
 .stagger-children > *:nth-child(7) { animation-delay: 0.35s; }
 .stagger-children > *:nth-child(8) { animation-delay: 0.4s; }
+
+.img-lift {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.10);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.img-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 28px 70px rgba(0,0,0,0.20), 0 12px 28px rgba(0,0,0,0.12);
+}
+
+.card-lift {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12), 0 6px 16px rgba(0,0,0,0.08);
+}
 
 .skeleton {
   background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border) 50%, var(--bg-secondary) 75%);

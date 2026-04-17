@@ -13,7 +13,7 @@ export default function ErrorPage() {
       }}>
         <XCircle size={56} style={{ color: '#E53E3E', margin: '0 auto 20px', display: 'block' }} />
         <h2 style={{
-          fontFamily: 'Cormorant Garamond, serif',
+          fontFamily: 'Lora, serif',
           fontSize: '1.8rem', color: 'var(--text)', marginBottom: '12px',
         }}>
           El pago no se completó
