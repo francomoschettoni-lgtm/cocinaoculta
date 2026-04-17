@@ -381,7 +381,6 @@ export default function BarfPage() {
       {!loading && products.length > 0 && (
         <section style={{
           padding: '80px 24px',
-          padding: '80px 24px',
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '44px' }}>
