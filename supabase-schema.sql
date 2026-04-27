@@ -74,6 +74,26 @@ create table if not exists categories (
 );
 
 -- =============================================
+-- VITRINAS / SHOWCASES (secciones de la homepage)
+-- =============================================
+create table if not exists showcases (
+  id uuid primary key default uuid_generate_v4(),
+  title text not null,
+  subtitle text,
+  display_order integer default 0,
+  is_active boolean default true,
+  created_at timestamptz default now()
+);
+
+create table if not exists showcase_products (
+  id uuid primary key default uuid_generate_v4(),
+  showcase_id uuid not null references showcases(id) on delete cascade,
+  product_id uuid not null references products(id) on delete cascade,
+  display_order integer default 0,
+  unique(showcase_id, product_id)
+);
+
+-- =============================================
 -- CONFIGURACION DEL SITIO
 -- =============================================
 create table if not exists site_settings (
@@ -91,12 +111,16 @@ create index if not exists idx_products_available on products(is_available);
 create index if not exists idx_orders_status on orders(order_status);
 create index if not exists idx_orders_created on orders(created_at desc);
 create index if not exists idx_order_items_order on order_items(order_id);
+create index if not exists idx_showcase_products_showcase on showcase_products(showcase_id);
+create index if not exists idx_showcase_products_product on showcase_products(product_id);
 
 -- =============================================
 -- ROW LEVEL SECURITY
 -- =============================================
 alter table products enable row level security;
 alter table orders enable row level security;
+alter table showcases enable row level security;
+alter table showcase_products enable row level security;
 alter table order_items enable row level security;
 alter table categories enable row level security;
 alter table site_settings enable row level security;
@@ -113,6 +137,19 @@ create policy "Categories are viewable by everyone" on categories
   for select using (true);
 
 create policy "Categories are editable by admin only" on categories
+  for all using (auth.role() = 'authenticated');
+
+-- Politicas para vitrinas: lectura publica
+create policy "Showcases viewable by everyone" on showcases
+  for select using (true);
+
+create policy "Showcases editable by admin" on showcases
+  for all using (auth.role() = 'authenticated');
+
+create policy "Showcase products viewable by everyone" on showcase_products
+  for select using (true);
+
+create policy "Showcase products editable by admin" on showcase_products
   for all using (auth.role() = 'authenticated');
 
 -- Politicas para pedidos: solo el admin puede ver todos

@@ -22,6 +22,23 @@ export interface Category {
   is_active: boolean
 }
 
+export interface Showcase {
+  id: string
+  title: string
+  subtitle: string | null
+  display_order: number
+  is_active: boolean
+  created_at: string
+}
+
+export interface ShowcaseProduct {
+  id: string
+  showcase_id: string
+  product_id: string
+  display_order: number
+  products?: Product
+}
+
 export interface CartItem {
   product: Product
   quantity: number

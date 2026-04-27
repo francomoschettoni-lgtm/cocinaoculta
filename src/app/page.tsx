@@ -6,18 +6,38 @@ import { Product } from '@/types'
 import ProductCard from '@/components/store/ProductCard'
 import StoreMap from '@/components/map/StoreMapClient'
 
-async function getFeaturedProducts(): Promise<Product[]> {
+interface ShowcaseSection {
+  id: string
+  title: string
+  subtitle: string | null
+  products: Product[]
+}
+
+async function getShowcases(): Promise<ShowcaseSection[]> {
   try {
-    const { data } = await supabase
-      .from('products').select('*')
-      .eq('is_available', true).eq('is_featured', true)
-      .order('created_at', { ascending: false }).limit(4)
-    return data || []
+    const { data: showcases } = await supabase
+      .from('showcases').select('*')
+      .eq('is_active', true).order('display_order')
+    if (!showcases?.length) return []
+
+    const { data: sp } = await supabase
+      .from('showcase_products').select('showcase_id, product_id, display_order, products(*)')
+      .order('display_order')
+
+    return showcases.map(s => ({
+      id: s.id,
+      title: s.title,
+      subtitle: s.subtitle,
+      products: (sp || [])
+        .filter((item: Record<string, unknown>) => item.showcase_id === s.id)
+        .map((item: Record<string, unknown>) => item.products as Product)
+        .filter((p: Product) => p.is_available),
+    })).filter(s => s.products.length > 0)
   } catch { return [] }
 }
 
 export default async function HomePage() {
-  const featured = await getFeaturedProducts()
+  const showcases = await getShowcases()
 
   return (
     <div>
@@ -225,18 +245,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      {/* ── Featured products ────────────────────────── */}
-      {featured.length > 0 && (
-        <section style={{ padding: '80px 24px' }}>
+      {/* ── Dynamic showcase sections ────────────────── */}
+      {showcases.map(showcase => (
+        <section key={showcase.id} style={{ padding: '80px 24px' }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <div style={{ marginBottom: '44px' }}>
-              <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>Destacados</span>
-              <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700, color: 'var(--text)', marginTop: '6px' }}>
-                Nuestros favoritos
+              {showcase.subtitle && (
+                <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                  {showcase.subtitle}
+                </span>
+              )}
+              <h2 style={{ fontFamily: 'Lora, serif', fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700, color: 'var(--text)', marginTop: showcase.subtitle ? '6px' : '0' }}>
+                {showcase.title}
               </h2>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '24px' }} className="stagger-children">
-              {featured.map(product => <ProductCard key={product.id} product={product} />)}
+              {showcase.products.map(product => <ProductCard key={product.id} product={product} />)}
             </div>
             <div style={{ marginTop: '36px' }}>
               <Link href="/tienda" style={{
@@ -249,7 +273,7 @@ export default async function HomePage() {
             </div>
           </div>
         </section>
-      )}
+      ))}
 
       {/* ── BARF Promo ────────────────────────────────── */}
       <section style={{

@@ -7,23 +7,16 @@ import { Product } from '@/types'
 import { formatPrice } from '@/lib/utils'
 import AdminGuard from '@/components/admin/AdminGuard'
 import AdminNav from '@/components/admin/AdminNav'
+import { Category } from '@/types'
 import {
   Plus, Pencil, Trash2, Eye, EyeOff, Star, StarOff,
   Upload, X, Check, AlertCircle, Package,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
-const CATEGORIES = [
-  { value: 'platos-principales', label: 'Platos Principales' },
-  { value: 'nueces-pecan', label: 'Nueces Pecan' },
-  { value: 'guarniciones', label: 'Guarniciones' },
-  { value: 'salsas', label: 'Salsas' },
-  { value: 'barf-perros', label: 'BARF Perros' },
-]
-
 const EMPTY_FORM = {
   name: '', description: '', price: '',
-  category: 'platos-principales', weight: '',
+  category: '', weight: '',
   preparation: '', is_available: true, is_featured: false,
   image_url: '',
 }
@@ -38,9 +31,14 @@ export default function ProductosAdmin() {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>('')
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [categories, setCategories] = useState<Category[]>([])
   const fileRef = useRef<HTMLInputElement>(null)
 
-  useEffect(() => { loadProducts() }, [])
+  useEffect(() => {
+    loadProducts()
+    supabase.from('categories').select('*').eq('is_active', true).order('display_order')
+      .then(({ data }) => setCategories(data || []))
+  }, [])
 
   async function loadProducts() {
     setLoading(true)
@@ -51,7 +49,7 @@ export default function ProductosAdmin() {
 
   function openCreate() {
     setEditing(null)
-    setForm(EMPTY_FORM)
+    setForm({ ...EMPTY_FORM, category: categories[0]?.slug || '' })
     setImageFile(null)
     setImagePreview('')
     setShowModal(true)
@@ -258,7 +256,7 @@ export default function ProductosAdmin() {
                         backgroundColor: 'var(--accent-light)',
                         color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600,
                       }}>
-                        {CATEGORIES.find(c => c.value === p.category)?.label || p.category}
+                        {categories.find(c => c.slug === p.category)?.name || p.category}
                       </span>
                     </td>
                     <td style={{ padding: '12px 16px' }}>
@@ -388,7 +386,7 @@ export default function ProductosAdmin() {
                 <FormLabel>Categoría</FormLabel>
                 <select value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}
                   style={{ width: '100%', padding: '10px 12px', backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border)', borderRadius: '9px', color: 'var(--text)', fontSize: '0.9rem', fontFamily: 'Outfit, sans-serif', outline: 'none' }}>
-                  {CATEGORIES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+                  {categories.map(c => <option key={c.slug} value={c.slug}>{c.name}</option>)}
                 </select>
               </div>
               <div style={{ gridColumn: '1 / -1' }}>

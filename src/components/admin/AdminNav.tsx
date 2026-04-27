@@ -3,13 +3,15 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
-import { Package, ShoppingBag, LayoutDashboard, LogOut, ExternalLink, Users } from 'lucide-react'
+import { Package, ShoppingBag, LayoutDashboard, LogOut, ExternalLink, Users, Tag, LayoutList } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useTheme } from '@/components/layout/ThemeProvider'
 
 const navItems = [
   { href: '/admin/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
   { href: '/admin/productos', label: 'Productos', icon: <Package size={18} /> },
+  { href: '/admin/categorias', label: 'Categorías', icon: <Tag size={18} /> },
+  { href: '/admin/secciones', label: 'Secciones', icon: <LayoutList size={18} /> },
   { href: '/admin/pedidos', label: 'Pedidos', icon: <ShoppingBag size={18} /> },
   { href: '/admin/usuarios', label: 'Usuarios', icon: <Users size={18} /> },
 ]
