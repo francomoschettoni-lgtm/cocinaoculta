@@ -19,8 +19,8 @@ export default function TiendaPage() {
         supabase.from('products').select('*').eq('is_available', true).order('category').order('name'),
         supabase.from('categories').select('*').eq('is_active', true).order('display_order'),
       ])
-      setProducts(prods || [])
-      setCategories(cats || [])
+      setProducts((prods || []).filter(p => p.category !== 'barf-perros'))
+      setCategories((cats || []).filter(c => c.slug !== 'barf-perros'))
       setLoading(false)
     }
     load()

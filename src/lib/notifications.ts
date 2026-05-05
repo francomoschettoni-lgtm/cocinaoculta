@@ -20,9 +20,8 @@ const ZONE_LABELS: Record<string, string> = {
 }
 
 const PAYMENT_LABELS: Record<string, string> = {
-  mercadopago: 'MercadoPago',
   transferencia: 'Transferencia',
-  efectivo: 'Efectivo',
+  efectivo: 'Coordinar por WhatsApp',
 }
 
 function formatPrice(n: number) {

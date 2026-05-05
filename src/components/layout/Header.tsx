@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
-import { ShoppingCart, Sun, Moon, Menu, X } from 'lucide-react'
+import { ShoppingCart, Sun, Moon, Menu, X, PawPrint } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { useTheme } from './ThemeProvider'
 import { useCartStore } from '@/store/cart'
@@ -10,7 +10,6 @@ import { useCartStore } from '@/store/cart'
 const NAV_LINKS = [
   { href: '/', label: 'Inicio' },
   { href: '/tienda', label: 'Tienda' },
-  { href: '/barf', label: 'BARF Perros' },
   { href: '/#nosotros', label: 'Nosotros' },
   { href: '/#contacto', label: 'Contacto' },
 ]
@@ -21,7 +20,6 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false)
   const itemCount = getItemCount()
 
-  // Lock body scroll when mobile menu is open
   useEffect(() => {
     document.body.style.overflow = menuOpen ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
@@ -58,14 +56,15 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Desktop nav — gap/alignment via inline, show/hide via Tailwind only */}
+          {/* Desktop nav */}
           <nav
             className="hidden md:flex"
-            style={{ gap: '36px', alignItems: 'center' }}
+            style={{ gap: '28px', alignItems: 'center' }}
           >
             {NAV_LINKS.map(({ href, label }) => (
               <NavLink key={href} href={href}>{label}</NavLink>
             ))}
+            <BarfNavLink />
           </nav>
 
           {/* Right actions */}
@@ -121,7 +120,7 @@ export default function Header() {
               )}
             </button>
 
-            {/* Hamburger — mobile only, no inline display override */}
+            {/* Hamburger — mobile only */}
             <button
               onClick={() => setMenuOpen(o => !o)}
               aria-label={menuOpen ? 'Cerrar menú' : 'Abrir menú'}
@@ -139,10 +138,9 @@ export default function Header() {
         </div>
       </header>
 
-      {/* Mobile menu — floating overlay, never pushes content */}
+      {/* Mobile menu */}
       {menuOpen && (
         <>
-          {/* Backdrop */}
           <div
             onClick={() => setMenuOpen(false)}
             style={{
@@ -153,7 +151,6 @@ export default function Header() {
             }}
           />
 
-          {/* Floating panel */}
           <div
             className="md:hidden"
             style={{
@@ -188,6 +185,44 @@ export default function Header() {
                 {label}
               </Link>
             ))}
+
+            {/* BARF special link — mobile */}
+            <Link
+              href="/barf"
+              onClick={() => setMenuOpen(false)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '10px',
+                padding: '12px 16px', margin: '4px 0',
+                borderRadius: '11px',
+                textDecoration: 'none',
+                background: 'linear-gradient(135deg, rgba(191,155,80,0.08) 0%, rgba(166,124,54,0.06) 100%)',
+                border: '1px solid rgba(191,155,80,0.20)',
+                transition: 'background 0.15s',
+              }}
+            >
+              <div style={{
+                width: '32px', height: '32px', borderRadius: '8px',
+                background: 'linear-gradient(135deg, #BF9B50 0%, #A67C36 100%)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                flexShrink: 0,
+              }}>
+                <PawPrint size={14} color="white" />
+              </div>
+              <div>
+                <span style={{
+                  display: 'block', fontWeight: 700, fontSize: '0.95rem',
+                  color: 'var(--text)', fontFamily: 'Inter, sans-serif',
+                }}>
+                  BARF Perros
+                </span>
+                <span style={{
+                  display: 'block', fontSize: '0.72rem', color: 'var(--text-muted)',
+                  fontWeight: 400, marginTop: '1px',
+                }}>
+                  Comida para perros
+                </span>
+              </div>
+            </Link>
 
             <div style={{
               margin: '8px 0 4px',
@@ -257,6 +292,63 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
       }}
     >
       {children}
+    </Link>
+  )
+}
+
+function BarfNavLink() {
+  return (
+    <Link
+      href="/barf"
+      style={{
+        textDecoration: 'none',
+        display: 'flex', alignItems: 'center', gap: '8px',
+        padding: '5px 14px 5px 8px',
+        borderRadius: '10px',
+        border: '1px solid rgba(191,155,80,0.20)',
+        background: 'linear-gradient(135deg, rgba(191,155,80,0.06) 0%, rgba(166,124,54,0.04) 100%)',
+        transition: 'all 0.25s ease',
+      }}
+      onMouseEnter={e => {
+        const el = e.currentTarget as HTMLAnchorElement
+        el.style.background = 'linear-gradient(135deg, rgba(191,155,80,0.14) 0%, rgba(166,124,54,0.08) 100%)'
+        el.style.borderColor = 'rgba(191,155,80,0.40)'
+        el.style.transform = 'translateY(-1px)'
+      }}
+      onMouseLeave={e => {
+        const el = e.currentTarget as HTMLAnchorElement
+        el.style.background = 'linear-gradient(135deg, rgba(191,155,80,0.06) 0%, rgba(166,124,54,0.04) 100%)'
+        el.style.borderColor = 'rgba(191,155,80,0.20)'
+        el.style.transform = 'translateY(0)'
+      }}
+    >
+      <div style={{
+        width: '26px', height: '26px', borderRadius: '7px',
+        background: 'linear-gradient(135deg, #BF9B50 0%, #A67C36 100%)',
+        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 0,
+      }}>
+        <PawPrint size={12} color="white" />
+      </div>
+      <div style={{ lineHeight: 1.2 }}>
+        <span style={{
+          display: 'block',
+          fontFamily: 'Inter, sans-serif',
+          fontSize: '0.82rem', fontWeight: 700,
+          color: 'var(--text)',
+          letterSpacing: '0.01em',
+        }}>
+          BARF Perros
+        </span>
+        <span style={{
+          display: 'block',
+          fontSize: '0.6rem', fontWeight: 500,
+          color: 'var(--text-muted)',
+          letterSpacing: '0.02em',
+        }}>
+          Comida para perros
+        </span>
+      </div>
     </Link>
   )
 }

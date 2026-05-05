@@ -1,14 +1,12 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { useCartStore } from '@/store/cart'
-import { formatPrice, cn } from '@/lib/utils'
+import { formatPrice } from '@/lib/utils'
 import { DeliveryZone, PaymentMethod, DELIVERY_COSTS, DELIVERY_ZONE_LABELS, MINIMUM_ORDER } from '@/types'
-import { ShoppingBag, CreditCard, Smartphone, Banknote, MapPin, User, Phone, Mail, AlertCircle, CheckCircle } from 'lucide-react'
+import { ShoppingBag, Banknote, MapPin, User, Phone, Mail, AlertCircle, CheckCircle, MessageCircle, Copy } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
-import Image from 'next/image'
 
 interface FormData {
   name: string
@@ -20,12 +18,29 @@ interface FormData {
   notes: string
 }
 
+function buildWhatsAppMessage(orderNumber: number | null, form: FormData, items: { product: { name: string; price: number }; quantity: number }[], total: number) {
+  const lines = [
+    `Hola! Hice un pedido${orderNumber ? ` #${orderNumber}` : ''}:`,
+    '',
+    ...items.map(i => `- ${i.quantity}x ${i.product.name} (${formatPrice(i.product.price * i.quantity)})`),
+    '',
+    `Total: *${formatPrice(total)}*`,
+    `Zona: ${form.zone ? DELIVERY_ZONE_LABELS[form.zone as DeliveryZone] : ''}`,
+    `Dirección: ${form.address}`,
+    '',
+    form.payment === 'transferencia'
+      ? 'Ya hice la transferencia, adjunto comprobante.'
+      : 'Quiero coordinar el pago.',
+  ]
+  return encodeURIComponent(lines.join('\n'))
+}
+
 export default function CheckoutPage() {
   const { items, getTotal, clearCart } = useCartStore()
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [success, setSuccess] = useState(false)
   const [orderNumber, setOrderNumber] = useState<number | null>(null)
+  const [copied, setCopied] = useState(false)
 
   const [form, setForm] = useState<FormData>({
     name: '', email: '', phone: '', address: '',
@@ -35,6 +50,9 @@ export default function CheckoutPage() {
   const subtotal = getTotal()
   const deliveryCost = form.zone ? DELIVERY_COSTS[form.zone as DeliveryZone] : 0
   const total = subtotal + deliveryCost
+
+  const [savedItems, setSavedItems] = useState(items)
+  const [savedTotal, setSavedTotal] = useState(total)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -76,14 +94,9 @@ export default function CheckoutPage() {
       const data = await res.json()
       if (!res.ok) throw new Error(data.error || 'Error al procesar el pedido')
 
-      // MP: redirect to MercadoPago immediately (before showing success screen)
-      if (form.payment === 'mercadopago' && data.init_point) {
-        clearCart()
-        window.location.href = data.init_point
-        return
-      }
-
       setOrderNumber(data.order_number)
+      setSavedItems([...items])
+      setSavedTotal(total)
       setSuccess(true)
       clearCart()
     } catch (err) {
@@ -91,6 +104,13 @@ export default function CheckoutPage() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleCopyAlias = () => {
+    navigator.clipboard.writeText('Cocina.oculta')
+    setCopied(true)
+    toast.success('Alias copiado')
+    setTimeout(() => setCopied(false), 2000)
   }
 
   if (items.length === 0 && !success) {
@@ -118,6 +138,9 @@ export default function CheckoutPage() {
   }
 
   if (success) {
+    const waMsg = buildWhatsAppMessage(orderNumber, form, savedItems, savedTotal)
+    const waUrl = `https://wa.me/5491153447998?text=${waMsg}`
+
     return (
       <div style={{
         maxWidth: '520px', margin: '80px auto', textAlign: 'center',
@@ -142,47 +165,68 @@ export default function CheckoutPage() {
               Pedido <strong style={{ color: 'var(--accent)' }}>#{orderNumber}</strong>
             </p>
           )}
-          <p style={{ color: 'var(--text-muted)', marginBottom: '28px', lineHeight: 1.7, fontSize: '0.95rem' }}>
-            Te contactamos a la brevedad para confirmar el pedido y coordinar la entrega.
-          </p>
 
-          {form.payment === 'transferencia' && (
-            <div style={{
-              backgroundColor: 'var(--accent-light)',
-              border: '1px solid var(--accent)',
-              borderRadius: '12px',
-              padding: '16px 20px',
-              marginBottom: '24px',
-              textAlign: 'left',
-            }}>
-              <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: '8px', fontSize: '0.9rem' }}>
-                Datos para transferencia:
+          {form.payment === 'transferencia' ? (
+            <>
+              <p style={{ color: 'var(--text-muted)', marginBottom: '20px', lineHeight: 1.7, fontSize: '0.95rem' }}>
+                Transferí al alias y envianos el comprobante por WhatsApp para confirmar.
               </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>Alias: <strong style={{ color: 'var(--accent)' }}>Cocina.oculta</strong></p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem', marginTop: '4px' }}>
-                Monto: <strong style={{ color: 'var(--text)' }}>{formatPrice(total)}</strong>
-              </p>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '8px', lineHeight: 1.5 }}>
-                Envianos el comprobante por WhatsApp para confirmar el pedido.
-              </p>
-            </div>
+
+              <div style={{
+                backgroundColor: 'var(--accent-light)',
+                border: '1px solid var(--accent)',
+                borderRadius: '12px',
+                padding: '16px 20px',
+                marginBottom: '24px',
+                textAlign: 'left',
+              }}>
+                <p style={{ fontWeight: 700, color: 'var(--text)', marginBottom: '10px', fontSize: '0.9rem' }}>
+                  Datos para transferencia:
+                </p>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                    Alias: <strong style={{ color: 'var(--accent)', fontSize: '1rem' }}>Cocina.oculta</strong>
+                  </p>
+                  <button onClick={handleCopyAlias} style={{
+                    background: 'none', border: 'none', cursor: 'pointer',
+                    color: copied ? 'var(--accent)' : 'var(--text-muted)',
+                    padding: '2px',
+                  }}>
+                    <Copy size={14} />
+                  </button>
+                </div>
+                <p style={{ color: 'var(--text-muted)', fontSize: '0.88rem' }}>
+                  Monto: <strong style={{ color: 'var(--text)' }}>{formatPrice(savedTotal)}</strong>
+                </p>
+              </div>
+            </>
+          ) : (
+            <p style={{ color: 'var(--text-muted)', marginBottom: '24px', lineHeight: 1.7, fontSize: '0.95rem' }}>
+              Coordiná el pago y la entrega por WhatsApp.
+            </p>
           )}
 
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="https://wa.me/5491153447998" target="_blank" rel="noopener noreferrer" style={{
-              padding: '11px 22px', backgroundColor: '#25D366', color: 'white',
-              borderRadius: '12px', textDecoration: 'none', fontWeight: 600, fontSize: '0.88rem',
-            }}>
-              Confirmar por WhatsApp
-            </a>
-            <Link href="/tienda" style={{
-              padding: '11px 22px',
-              border: '1px solid var(--border)', color: 'var(--text)',
-              borderRadius: '12px', textDecoration: 'none', fontWeight: 500, fontSize: '0.88rem',
-            }}>
-              Seguir comprando
-            </Link>
-          </div>
+          <a href={waUrl} target="_blank" rel="noopener noreferrer" style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px',
+            width: '100%', padding: '14px',
+            backgroundColor: '#25D366', color: 'white',
+            borderRadius: '12px', textDecoration: 'none',
+            fontWeight: 700, fontSize: '0.95rem',
+            boxShadow: '0 4px 16px rgba(37,211,102,0.3)',
+            marginBottom: '12px',
+          }}>
+            <MessageCircle size={18} />
+            {form.payment === 'transferencia' ? 'Enviar comprobante por WhatsApp' : 'Confirmar por WhatsApp'}
+          </a>
+
+          <Link href="/tienda" style={{
+            display: 'block', textAlign: 'center',
+            padding: '11px 22px',
+            color: 'var(--text-muted)',
+            textDecoration: 'none', fontWeight: 500, fontSize: '0.88rem',
+          }}>
+            Seguir comprando
+          </Link>
         </div>
       </div>
     )
@@ -257,26 +301,20 @@ export default function CheckoutPage() {
               placeholder="Instrucciones de entrega, referencias, etc." />
           </Section>
 
-          <Section title="Método de pago" icon={<CreditCard size={16} />}>
+          <Section title="Método de pago" icon={<Banknote size={16} />}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
               {[
                 {
-                  value: 'mercadopago' as PaymentMethod,
-                  label: 'MercadoPago',
-                  desc: 'Tarjeta de crédito / débito / MP',
-                  icon: <Smartphone size={18} />,
-                },
-                {
                   value: 'transferencia' as PaymentMethod,
                   label: 'Transferencia',
-                  desc: 'Alias: Cocina.oculta',
+                  desc: 'Alias: Cocina.oculta · Enviás el comprobante por WhatsApp',
                   icon: <Banknote size={18} />,
                 },
                 {
                   value: 'efectivo' as PaymentMethod,
-                  label: 'Efectivo',
-                  desc: 'Pago contra entrega',
-                  icon: <Banknote size={18} />,
+                  label: 'Coordinar por WhatsApp',
+                  desc: 'Arreglás el pago directamente por WhatsApp',
+                  icon: <MessageCircle size={18} />,
                 },
               ].map(({ value, label, desc, icon }) => (
                 <button

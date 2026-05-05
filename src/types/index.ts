@@ -45,7 +45,7 @@ export interface CartItem {
 }
 
 export type DeliveryZone = 'san_isidro' | 'tigre' | 'escobar'
-export type PaymentMethod = 'mercadopago' | 'transferencia' | 'efectivo'
+export type PaymentMethod = 'transferencia' | 'efectivo'
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 export type PaymentStatus = 'pending' | 'approved' | 'rejected' | 'cancelled'
 

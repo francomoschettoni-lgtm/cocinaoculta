@@ -3,7 +3,7 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ArrowRight, Heart, Leaf, ShieldCheck, Sparkles, MessageCircle, Beef, Bone, Salad, Cherry } from 'lucide-react'
+import { ArrowRight, Heart, Leaf, ShieldCheck, Sparkles, MessageCircle, Beef, Bone, Salad, Cherry, PawPrint } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/types'
 import ProductCard from '@/components/store/ProductCard'
@@ -17,6 +17,11 @@ export default function BarfPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [currentImg, setCurrentImg] = useState(0)
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-brand', 'barf')
+    return () => { document.documentElement.removeAttribute('data-brand') }
+  }, [])
 
   useEffect(() => {
     async function load() {
@@ -65,7 +70,13 @@ export default function BarfPage() {
           ))}
           <div style={{
             position: 'absolute', inset: 0,
-            background: 'linear-gradient(to right, rgba(5,12,8,0.88) 0%, rgba(5,12,8,0.60) 45%, rgba(5,12,8,0.25) 100%)',
+            background: 'linear-gradient(to right, rgba(15,13,8,0.90) 0%, rgba(15,13,8,0.65) 45%, rgba(15,13,8,0.30) 100%)',
+          }} />
+          {/* Subtle bottom fade — only visible in dark mode */}
+          <div className="hero-bottom-fade" style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%',
+            background: 'linear-gradient(to bottom, transparent 0%, var(--bg) 100%)',
+            zIndex: 1, opacity: 0,
           }} />
         </div>
 
@@ -83,13 +94,13 @@ export default function BarfPage() {
             <div className="animate-fade-in">
               <div style={{
                 display: 'inline-flex', alignItems: 'center', gap: '8px',
-                border: '1px solid rgba(255,255,255,0.25)',
+                border: '1px solid rgba(191,155,80,0.35)',
                 borderRadius: '20px', padding: '5px 14px', marginBottom: '24px',
-                backgroundColor: 'rgba(255,255,255,0.08)',
+                backgroundColor: 'rgba(191,155,80,0.10)',
                 backdropFilter: 'blur(8px)',
               }}>
-                <Leaf size={13} style={{ color: '#7DBA9B' }} />
-                <span style={{ color: '#A8D5BA', fontSize: '0.78rem', fontWeight: 500, letterSpacing: '0.06em' }}>
+                <PawPrint size={13} style={{ color: '#D4AE5E' }} />
+                <span style={{ color: '#D4AE5E', fontSize: '0.78rem', fontWeight: 500, letterSpacing: '0.06em' }}>
                   100% natural · Sin conservantes
                 </span>
               </div>
@@ -97,16 +108,16 @@ export default function BarfPage() {
               <h1 style={{
                 fontFamily: 'Lora, serif',
                 fontSize: 'clamp(2.6rem, 5vw, 4.2rem)',
-                fontWeight: 700, color: '#F5F0E8',
+                fontWeight: 700, color: '#F5EFE0',
                 lineHeight: 1.05, marginBottom: '20px',
                 textShadow: '0 2px 20px rgba(0,0,0,0.4)',
               }}>
                 Alimento crudo,{' '}
-                <em style={{ color: '#7DBA9B', fontStyle: 'italic' }}>biológicamente apropiado</em>
+                <em style={{ color: '#D4AE5E', fontStyle: 'italic' }}>biológicamente apropiado</em>
               </h1>
 
               <p style={{
-                fontSize: '1.05rem', color: 'rgba(235,235,225,0.82)',
+                fontSize: '1.05rem', color: 'rgba(235,230,215,0.80)',
                 lineHeight: 1.75, marginBottom: '32px', maxWidth: '460px',
               }}>
                 La dieta BARF devuelve a tu perro la nutrición que la naturaleza diseñó.
@@ -114,21 +125,22 @@ export default function BarfPage() {
               </p>
 
               <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '48px' }}>
-                <Link href="/tienda" style={{
+                <Link href="#productos" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   padding: '13px 28px',
-                  backgroundColor: '#2D7A4F', color: 'white',
+                  background: 'linear-gradient(135deg, #BF9B50 0%, #A67C36 100%)',
+                  color: 'white',
                   borderRadius: '10px', textDecoration: 'none',
                   fontWeight: 600, fontSize: '0.92rem',
-                  boxShadow: '0 4px 20px rgba(45,122,79,0.5)',
+                  boxShadow: '0 4px 20px rgba(191,155,80,0.4)',
                 }}>
                   Comprar ahora <ArrowRight size={15} />
                 </Link>
                 <a href="https://wa.me/5491153447998?text=Hola!%20Quiero%20consultar%20por%20el%20BARF%20Mix" target="_blank" rel="noopener noreferrer" style={{
                   display: 'inline-flex', alignItems: 'center', gap: '8px',
                   padding: '13px 24px',
-                  backgroundColor: 'rgba(255,255,255,0.12)', color: 'white',
-                  border: '1px solid rgba(255,255,255,0.25)',
+                  backgroundColor: 'rgba(255,255,255,0.10)', color: 'white',
+                  border: '1px solid rgba(255,255,255,0.20)',
                   borderRadius: '10px', textDecoration: 'none',
                   fontWeight: 500, fontSize: '0.92rem',
                   backdropFilter: 'blur(8px)',
@@ -140,7 +152,7 @@ export default function BarfPage() {
               {/* Stats */}
               <div style={{
                 display: 'flex', gap: '0',
-                borderTop: '1px solid rgba(255,255,255,0.15)',
+                borderTop: '1px solid rgba(191,155,80,0.20)',
                 paddingTop: '28px',
               }}>
                 {[
@@ -150,21 +162,21 @@ export default function BarfPage() {
                 ].map(({ value, label }, i) => (
                   <div key={i} style={{
                     flex: 1, paddingRight: '20px',
-                    borderRight: i < 2 ? '1px solid rgba(255,255,255,0.15)' : 'none',
+                    borderRight: i < 2 ? '1px solid rgba(191,155,80,0.20)' : 'none',
                     paddingLeft: i > 0 ? '20px' : '0',
                   }}>
                     <p style={{
                       fontFamily: 'Lora, serif',
                       fontSize: '1.1rem', fontWeight: 700,
-                      color: '#F5F0E8', lineHeight: 1.1, marginBottom: '3px',
+                      color: '#F5EFE0', lineHeight: 1.1, marginBottom: '3px',
                     }}>{value}</p>
-                    <p style={{ fontSize: '0.7rem', color: 'rgba(255,255,255,0.55)', lineHeight: 1.4 }}>{label}</p>
+                    <p style={{ fontSize: '0.7rem', color: 'rgba(212,174,94,0.55)', lineHeight: 1.4 }}>{label}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Right — floating cards like homepage */}
+            {/* Right — floating cards */}
             <div className="barf-hero-visual" style={{
               position: 'relative', display: 'flex',
               alignItems: 'center', justifyContent: 'center', height: '480px',
@@ -173,8 +185,8 @@ export default function BarfPage() {
               <div style={{
                 position: 'absolute',
                 width: '220px', height: '220px', borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(45,122,79,0.25) 0%, transparent 70%)',
-                border: '1px solid rgba(255,255,255,0.15)',
+                background: 'radial-gradient(circle, rgba(191,155,80,0.20) 0%, transparent 70%)',
+                border: '1px solid rgba(191,155,80,0.20)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 backdropFilter: 'blur(4px)',
               }} className="animate-float">
@@ -190,17 +202,17 @@ export default function BarfPage() {
                 <div key={i} style={{
                   position: 'absolute',
                   top, left, right, bottom,
-                  backgroundColor: accent ? '#2D7A4F' : 'rgba(15,25,18,0.75)',
-                  border: accent ? 'none' : '1px solid rgba(255,255,255,0.15)',
+                  backgroundColor: accent ? 'rgba(191,155,80,0.85)' : 'rgba(15,13,8,0.75)',
+                  border: accent ? 'none' : '1px solid rgba(191,155,80,0.15)',
                   borderRadius: '14px', padding: '12px 16px',
                   backdropFilter: 'blur(12px)',
-                  boxShadow: accent ? '0 8px 24px rgba(45,122,79,0.4)' : '0 4px 20px rgba(0,0,0,0.3)',
+                  boxShadow: accent ? '0 8px 24px rgba(191,155,80,0.3)' : '0 4px 20px rgba(0,0,0,0.3)',
                   animation: `float ${dur} ease-in-out infinite`,
                   animationDelay: delay,
                   maxWidth: '170px',
                 }}>
                   <p style={{ fontFamily: 'Lora, serif', fontSize: '0.98rem', fontWeight: 600, color: 'white', lineHeight: 1.2 }}>{label}</p>
-                  <p style={{ fontSize: '0.7rem', color: accent ? 'rgba(255,255,255,0.75)' : 'rgba(255,255,255,0.5)', marginTop: '3px' }}>{sub}</p>
+                  <p style={{ fontSize: '0.7rem', color: accent ? 'rgba(255,255,255,0.80)' : 'rgba(255,255,255,0.5)', marginTop: '3px' }}>{sub}</p>
                 </div>
               ))}
             </div>
@@ -294,13 +306,7 @@ export default function BarfPage() {
       <section style={{
         padding: '80px 24px',
         position: 'relative', overflow: 'hidden',
-        background: `
-          radial-gradient(ellipse 600px 400px at 10% 30%, rgba(45,122,79,0.06) 0%, transparent 100%),
-          radial-gradient(ellipse 500px 500px at 90% 70%, rgba(45,122,79,0.05) 0%, transparent 100%),
-          var(--bg)
-        `,
       }}>
-        {/* Decorative shapes */}
         <div style={{
           position: 'absolute', top: '60px', right: '-80px',
           width: '300px', height: '300px', borderRadius: '50%',
@@ -379,7 +385,7 @@ export default function BarfPage() {
 
       {/* ── PRODUCT FROM DB ── */}
       {!loading && products.length > 0 && (
-        <section style={{
+        <section id="productos" style={{
           padding: '80px 24px',
         }}>
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
@@ -410,10 +416,6 @@ export default function BarfPage() {
       <section style={{
         padding: '80px 24px', textAlign: 'center',
         position: 'relative', overflow: 'hidden',
-        background: `
-          radial-gradient(ellipse 800px 400px at 50% 50%, rgba(45,122,79,0.07) 0%, transparent 100%),
-          var(--bg)
-        `,
       }}>
         <div style={{
           position: 'absolute', top: '50%', left: '50%',
@@ -436,16 +438,6 @@ export default function BarfPage() {
             Pedí tu BARF Mix Completo por WhatsApp o compralo desde la tienda.
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-            <Link href="/tienda" style={{
-              display: 'inline-flex', alignItems: 'center', gap: '8px',
-              padding: '13px 28px',
-              backgroundColor: 'var(--accent)', color: 'white',
-              borderRadius: '10px', textDecoration: 'none',
-              fontWeight: 600, fontSize: '0.92rem',
-              boxShadow: '0 4px 20px rgba(45,122,79,0.4)',
-            }}>
-              Ir a la tienda <ArrowRight size={15} />
-            </Link>
             <a href="https://wa.me/5491153447998?text=Hola!%20Quiero%20pedir%20BARF%20Mix%20Completo" target="_blank" rel="noopener noreferrer" style={{
               display: 'inline-flex', alignItems: 'center', gap: '8px',
               padding: '13px 24px',

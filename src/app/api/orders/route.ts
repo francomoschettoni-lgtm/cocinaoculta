@@ -45,58 +45,6 @@ export async function POST(req: NextRequest) {
     )
     if (itemsError) throw itemsError
 
-    // MercadoPago Checkout Pro — initialized here, only when needed
-    if (payment_method === 'mercadopago') {
-      try {
-        const MercadoPagoConfig = (await import('mercadopago')).default
-        const { Preference } = await import('mercadopago')
-        const mp = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN! })
-
-        const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-        const preference = await new Preference(mp).create({
-          body: {
-            external_reference: String(order.id),
-            items: items.map((i: { product_name: string; product_price: number; quantity: number }) => ({
-              id: String(i.product_name),
-              title: i.product_name,
-              quantity: i.quantity,
-              unit_price: Number(i.product_price),
-              currency_id: 'ARS',
-            })),
-            ...(delivery_cost > 0 && {
-              shipments: { cost: delivery_cost, mode: 'not_specified' as const },
-            }),
-            payer: {
-              name: customer_name,
-              email: customer_email || 'cliente@cocinaoculta.com',
-              phone: { number: String(customer_phone) },
-            },
-            back_urls: {
-              success: `${siteUrl}/checkout/exito?order=${order.order_number}`,
-              failure: `${siteUrl}/checkout/error`,
-              pending: `${siteUrl}/checkout/exito?order=${order.order_number}&pending=1`,
-            },
-            auto_return: 'approved' as const,
-            statement_descriptor: 'Cocina Oculta',
-          },
-        })
-
-        return NextResponse.json({
-          success: true,
-          order_id: order.id,
-          order_number: order.order_number,
-          init_point: preference.init_point,
-        })
-      } catch (mpError) {
-        console.error('[MP Error]', mpError)
-        return NextResponse.json({
-          error: 'No se pudo conectar con MercadoPago. Probá con otro método de pago o intentá de nuevo.',
-          order_id: order.id,
-          order_number: order.order_number,
-        }, { status: 502 })
-      }
-    }
-
     // Fire-and-forget notifications (don't block the response)
     const notifPayload = {
       order_number: order.order_number,

@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import Image from 'next/image'
-import { ArrowRight, Clock, Leaf, MapPin, Package, MessageCircle, Phone, Heart } from 'lucide-react'
+import { ArrowRight, Clock, Leaf, MapPin, Package, MessageCircle, Phone, PawPrint } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/types'
 import ProductCard from '@/components/store/ProductCard'
@@ -55,10 +55,16 @@ export default async function HomePage() {
             priority
             quality={95}
           />
-          {/* Dark overlay — stronger at bottom, lighter at top for image visibility */}
+          {/* Dark overlay */}
           <div style={{
             position: 'absolute', inset: 0,
             background: 'linear-gradient(135deg, rgba(5,12,8,0.92) 0%, rgba(5,12,8,0.82) 50%, rgba(5,12,8,0.70) 100%)',
+          }} />
+          {/* Subtle bottom fade — only visible in dark mode */}
+          <div className="hero-bottom-fade" style={{
+            position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%',
+            background: 'linear-gradient(to bottom, transparent 0%, var(--bg) 100%)',
+            zIndex: 1, opacity: 0,
           }} />
         </div>
 
@@ -278,8 +284,34 @@ export default async function HomePage() {
       {/* ── BARF Promo ────────────────────────────────── */}
       <section style={{
         padding: '80px 24px',
+        position: 'relative',
+        overflow: 'hidden',
       }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+
+        <div style={{ maxWidth: '1200px', margin: '0 auto', position: 'relative' }}>
+
+          {/* BARF brand header */}
+          <div style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            marginBottom: '40px',
+          }}>
+            <Image src="/barf-logo.png" alt="BARF" width={36} height={36} style={{ objectFit: 'contain' }} />
+            <div>
+              <p style={{
+                fontFamily: 'Lora, serif', fontSize: '0.9rem', fontWeight: 700,
+                color: 'var(--text)', letterSpacing: '0.06em',
+              }}>
+                BARF PERROS
+              </p>
+              <p style={{
+                fontSize: '0.65rem', color: 'var(--text-muted)',
+                fontWeight: 500, letterSpacing: '0.1em', textTransform: 'uppercase',
+              }}>
+                Comida para perros
+              </p>
+            </div>
+          </div>
+
           <div className="barf-promo-grid" style={{
             display: 'grid', gridTemplateColumns: '1fr 1fr',
             gap: '60px', alignItems: 'center',
@@ -288,6 +320,7 @@ export default async function HomePage() {
             <div className="img-lift" style={{
               borderRadius: '20px', overflow: 'hidden',
               position: 'relative', height: '380px',
+              border: '1px solid rgba(191,155,80,0.12)',
             }}>
               <Image
                 src="/barf-corgi.png"
@@ -295,28 +328,30 @@ export default async function HomePage() {
                 fill
                 style={{ objectFit: 'cover' }}
               />
+              <div style={{
+                position: 'absolute', top: '16px', left: '16px',
+                backgroundColor: 'rgba(26,20,8,0.80)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '10px', padding: '7px 12px',
+                border: '1px solid rgba(191,155,80,0.25)',
+                display: 'flex', alignItems: 'center', gap: '6px',
+              }}>
+                <PawPrint size={12} style={{ color: '#BF9B50' }} />
+                <span style={{ color: '#E8DCC8', fontSize: '0.7rem', fontWeight: 600, letterSpacing: '0.04em' }}>
+                  100% Natural
+                </span>
+              </div>
             </div>
 
             {/* Text */}
             <div>
-              <div style={{
-                display: 'inline-flex', alignItems: 'center', gap: '6px',
-                backgroundColor: 'var(--accent-light)', border: '1px solid var(--accent)',
-                borderRadius: '20px', padding: '5px 14px', marginBottom: '16px',
-              }}>
-                <Heart size={12} style={{ color: 'var(--accent)' }} />
-                <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.04em' }}>
-                  NUEVO · BARF para perros
-                </span>
-              </div>
-
               <h2 style={{
                 fontFamily: 'Lora, serif',
                 fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)', fontWeight: 700,
                 color: 'var(--text)', marginBottom: '16px', lineHeight: 1.1,
               }}>
                 Alimento crudo,{' '}
-                <em style={{ color: 'var(--accent)', fontStyle: 'italic' }}>biológicamente apropiado</em>
+                <em style={{ color: '#BF9B50', fontStyle: 'italic' }}>biológicamente apropiado</em>
               </h2>
 
               <p style={{
@@ -327,7 +362,7 @@ export default async function HomePage() {
                 50% carne de res, 20% menudos, 20% verduras y 10% frutas de estación.
               </p>
 
-              <div style={{ display: 'flex', gap: '16px', marginBottom: '28px', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', gap: '14px', marginBottom: '28px', flexWrap: 'wrap' }}>
                 {[
                   { value: '100%', label: 'Natural' },
                   { value: 'Sin', label: 'Conservantes' },
@@ -335,28 +370,42 @@ export default async function HomePage() {
                 ].map(({ value, label }, i) => (
                   <div key={i} style={{
                     padding: '10px 16px', backgroundColor: 'var(--bg-card)',
-                    border: '1px solid var(--border)', borderRadius: '12px',
-                    textAlign: 'center', minWidth: '80px',
+                    border: '1px solid rgba(191,155,80,0.20)',
+                    borderRadius: '12px', textAlign: 'center', minWidth: '80px',
                   }}>
                     <p style={{
                       fontFamily: 'Lora, serif',
-                      fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent)',
+                      fontSize: '1.1rem', fontWeight: 700, color: '#BF9B50',
                     }}>{value}</p>
                     <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>{label}</p>
                   </div>
                 ))}
               </div>
 
-              <Link href="/barf" style={{
-                display: 'inline-flex', alignItems: 'center', gap: '8px',
-                padding: '12px 24px',
-                backgroundColor: 'var(--accent)', color: 'white',
-                borderRadius: '10px', textDecoration: 'none',
-                fontWeight: 600, fontSize: '0.9rem',
-                boxShadow: '0 4px 16px rgba(45,122,79,0.4)',
-              }}>
-                Conocer BARF <ArrowRight size={15} />
-              </Link>
+              <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                <Link href="/barf" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  padding: '12px 24px',
+                  background: 'linear-gradient(135deg, #BF9B50 0%, #A67C36 100%)',
+                  color: 'white',
+                  borderRadius: '10px', textDecoration: 'none',
+                  fontWeight: 600, fontSize: '0.9rem',
+                  boxShadow: '0 4px 16px rgba(191,155,80,0.3)',
+                }}>
+                  Conocer BARF <ArrowRight size={15} />
+                </Link>
+                <a href="https://wa.me/5491153447998?text=Hola!%20Quiero%20consultar%20por%20el%20BARF" target="_blank" rel="noopener noreferrer" style={{
+                  display: 'inline-flex', alignItems: 'center', gap: '8px',
+                  padding: '12px 22px',
+                  border: '1px solid rgba(191,155,80,0.25)',
+                  color: '#BF9B50',
+                  borderRadius: '10px', textDecoration: 'none',
+                  fontWeight: 500, fontSize: '0.9rem',
+                  backgroundColor: 'transparent',
+                }}>
+                  <MessageCircle size={15} /> Consultar
+                </a>
+              </div>
             </div>
           </div>
         </div>
