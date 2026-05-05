@@ -116,7 +116,7 @@ export default function PedidosAdmin() {
                       {order.customer_name}
                     </p>
                     <p style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                      {DELIVERY_ZONE_LABELS[order.delivery_zone]}
+                      {DELIVERY_ZONE_LABELS[order.delivery_zone] || order.delivery_zone}
                     </p>
                   </div>
                   <span style={{ fontWeight: 700, fontSize: '0.95rem', color: 'var(--text)' }}>
@@ -148,7 +148,7 @@ export default function PedidosAdmin() {
                       </InfoBlock>
                       <InfoBlock label="Entrega">
                         <p style={{ fontSize: '0.88rem', color: 'var(--text)' }}>{order.delivery_address}</p>
-                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>{DELIVERY_ZONE_LABELS[order.delivery_zone]}</p>
+                        <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '2px' }}>{DELIVERY_ZONE_LABELS[order.delivery_zone] || order.delivery_zone}</p>
                       </InfoBlock>
                       <InfoBlock label="Pago">
                         <p style={{ fontSize: '0.88rem', color: 'var(--text)', textTransform: 'capitalize' }}>{order.payment_method}</p>

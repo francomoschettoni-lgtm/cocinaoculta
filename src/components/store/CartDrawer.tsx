@@ -5,13 +5,13 @@ import Image from 'next/image'
 import { X, Trash2, Plus, Minus, ShoppingBag, AlertCircle, Package } from 'lucide-react'
 import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
-import { MINIMUM_ORDER } from '@/types'
+import { MINIMUM_ORDER_PICKUP } from '@/types'
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeItem, updateQuantity, getTotal } = useCartStore()
   const total = getTotal()
-  const meetsMinimum = total >= MINIMUM_ORDER
-  const remaining = MINIMUM_ORDER - total
+  const meetsMinimum = total >= MINIMUM_ORDER_PICKUP
+  const remaining = MINIMUM_ORDER_PICKUP - total
 
   if (!isOpen) return null
 
@@ -236,7 +236,7 @@ export default function CartDrawer() {
               }}>
                 <AlertCircle size={14} style={{ color: 'var(--accent)', flexShrink: 0 }} />
                 <p style={{ fontSize: '0.8rem', color: 'var(--text)' }}>
-                  Te faltan <strong>{formatPrice(remaining)}</strong> para el mínimo de {formatPrice(MINIMUM_ORDER)}
+                  Te faltan <strong>{formatPrice(remaining)}</strong> para el mínimo de {formatPrice(MINIMUM_ORDER_PICKUP)}
                 </p>
               </div>
             )}

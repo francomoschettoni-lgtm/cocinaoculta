@@ -147,7 +147,7 @@ export default async function HomePage() {
               }}>
                 {[
                   { value: 'Al vacío', label: 'Sellado artesanal' },
-                  { value: '3 zonas', label: 'Tigre · San Isidro · Escobar' },
+                  { value: '3 zonas', label: 'Capital · San Isidro · Nordelta' },
                   { value: 'Sin aditivos', label: 'Comida real' },
                 ].map(({ value, label }, i) => (
                   <div key={i} style={{
@@ -233,7 +233,7 @@ export default async function HomePage() {
               { icon: <Clock size={20} />, title: 'Listo en minutos', desc: 'Microondas o agua hirviendo' },
               { icon: <Package size={20} />, title: 'Sellado al vacío', desc: 'Frescura garantizada' },
               { icon: <Leaf size={20} />, title: 'Sin conservantes', desc: 'Solo ingredientes frescos' },
-              { icon: <MapPin size={20} />, title: 'Envíos locales', desc: 'Tigre, San Isidro, Escobar' },
+              { icon: <MapPin size={20} />, title: 'Envíos locales', desc: 'Capital, San Isidro, Nordelta' },
             ].map(({ icon, title, desc }) => (
               <div key={title} className="card-lift" style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center',
@@ -365,8 +365,8 @@ export default async function HomePage() {
               <div style={{ display: 'flex', gap: '14px', marginBottom: '28px', flexWrap: 'wrap' }}>
                 {[
                   { value: '100%', label: 'Natural' },
-                  { value: 'Sin', label: 'Conservantes' },
-                  { value: '$20.000', label: '500g' },
+                  { value: 'Desde 5u', label: 'Compra mínima' },
+                  { value: '$9.000/u', label: '500g' },
                 ].map(({ value, label }, i) => (
                   <div key={i} style={{
                     padding: '10px 16px', backgroundColor: 'var(--bg-card)',
@@ -464,7 +464,7 @@ export default async function HomePage() {
               <div style={{ marginBottom: '28px' }}>
                 <p style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '10px' }}>Zonas de envío</p>
                 <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                  {[{ z: 'Tigre', p: '$2.000' }, { z: 'San Isidro', p: '$3.000' }, { z: 'Escobar', p: '$1.000' }].map(({ z, p }) => (
+                  {[{ z: 'Capital', p: '$5.000' }, { z: 'San Isidro', p: '$5.000' }, { z: 'Nordelta', p: '$5.000' }].map(({ z, p }) => (
                     <span key={z} style={{
                       padding: '5px 12px', backgroundColor: 'var(--accent-light)', color: 'var(--accent)',
                       borderRadius: '20px', fontSize: '0.8rem', fontWeight: 500, border: '1px solid var(--accent)',

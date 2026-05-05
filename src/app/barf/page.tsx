@@ -157,8 +157,8 @@ export default function BarfPage() {
               }}>
                 {[
                   { value: '100% crudo', label: 'Sin cocción' },
-                  { value: '500g', label: 'Por porción' },
-                  { value: '$20.000', label: 'BARF Mix Completo' },
+                  { value: 'Desde 5u', label: 'Compra mínima' },
+                  { value: '$9.000/u', label: 'BARF Mix 500g' },
                 ].map(({ value, label }, i) => (
                   <div key={i} style={{
                     flex: 1, paddingRight: '20px',
@@ -194,10 +194,10 @@ export default function BarfPage() {
               </div>
 
               {[
-                { top: '40px', left: '0', label: 'BARF Mix 500g', sub: '$20.000', delay: '0.5s', dur: '5s' },
+                { top: '40px', left: '0', label: 'Desde $9.000/u', sub: 'Mínimo 5 unidades', delay: '0.5s', dur: '5s' },
                 { top: '80px', right: '0', label: '100% natural', sub: 'Sin conservantes', delay: '1s', dur: '4.5s', accent: true },
-                { bottom: '80px', left: '10px', label: 'Sellado al vacío', sub: 'Frescura garantizada', delay: '0.2s', dur: '5.5s' },
-                { bottom: '50px', right: '10px', label: 'Envíos locales', sub: 'Tigre · San Isidro · Escobar', delay: '1.5s', dur: '4s' },
+                { bottom: '80px', left: '10px', label: 'Cajas de 10 y 15', sub: 'Mejor precio por volumen', delay: '0.2s', dur: '5.5s' },
+                { bottom: '50px', right: '10px', label: 'Envíos', sub: 'Capital · San Isidro · Nordelta · Escobar', delay: '1.5s', dur: '4s' },
               ].map(({ top, left, right, bottom, label, sub, delay, dur, accent }, i) => (
                 <div key={i} style={{
                   position: 'absolute',
@@ -298,6 +298,126 @@ export default function BarfPage() {
                 }}>{label}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRICING + SHIPPING ── */}
+      <section style={{
+        padding: '80px 24px',
+        position: 'relative', overflow: 'hidden',
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+            <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+              Precios
+            </span>
+            <h2 style={{
+              fontFamily: 'Lora, serif',
+              fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700,
+              color: 'var(--text)', marginTop: '6px',
+            }}>
+              Elegí tu pack
+            </h2>
+            <p style={{ color: 'var(--text-muted)', marginTop: '12px', maxWidth: '480px', margin: '12px auto 0', lineHeight: 1.7 }}>
+              Cada unidad es un BARF Mix Completo de 500g sellado al vacío. Mejor precio a mayor cantidad.
+            </p>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '56px' }}>
+            {[
+              { units: 5, price: 9000, label: 'Compra mínima', total: 45000 },
+              { units: 10, price: 8000, label: 'Caja de 10', total: 80000, featured: true },
+              { units: 15, price: 7000, label: 'Caja de 15', total: 105000 },
+            ].map(({ units, price, label, total, featured }) => (
+              <div key={units} style={{
+                backgroundColor: 'var(--bg-card)',
+                border: featured ? '2px solid var(--accent)' : '1px solid var(--border)',
+                borderRadius: '18px',
+                padding: '32px 28px',
+                textAlign: 'center',
+                position: 'relative',
+                boxShadow: featured ? '0 8px 32px rgba(191,155,80,0.15)' : '0 4px 16px rgba(0,0,0,0.06)',
+                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              }}
+              onMouseEnter={e => {
+                const el = e.currentTarget as HTMLDivElement
+                el.style.transform = 'translateY(-4px)'
+              }}
+              onMouseLeave={e => {
+                const el = e.currentTarget as HTMLDivElement
+                el.style.transform = 'translateY(0)'
+              }}>
+                {featured && (
+                  <div style={{
+                    position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
+                    backgroundColor: 'var(--accent)', color: 'white',
+                    padding: '3px 14px', borderRadius: '20px',
+                    fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em',
+                  }}>
+                    Más elegido
+                  </div>
+                )}
+                <p style={{
+                  fontFamily: 'Lora, serif',
+                  fontSize: '0.9rem', fontWeight: 600,
+                  color: 'var(--text-muted)', marginBottom: '8px',
+                }}>{label}</p>
+                <p style={{
+                  fontFamily: 'Lora, serif',
+                  fontSize: '2.6rem', fontWeight: 700,
+                  color: 'var(--accent)', lineHeight: 1,
+                }}>
+                  {units}<span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--text-muted)' }}>u</span>
+                </p>
+                <p style={{
+                  fontSize: '1.3rem', fontWeight: 700,
+                  color: 'var(--text)', margin: '12px 0 4px',
+                }}>
+                  ${price.toLocaleString('es-AR')}<span style={{ fontSize: '0.85rem', fontWeight: 400, color: 'var(--text-muted)' }}>/u</span>
+                </p>
+                <p style={{
+                  fontSize: '0.82rem', color: 'var(--text-muted)',
+                }}>
+                  Total: ${total.toLocaleString('es-AR')}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div style={{
+            backgroundColor: 'var(--bg-card)',
+            border: '1px solid var(--border)',
+            borderRadius: '16px',
+            padding: '28px 32px',
+          }}>
+            <h3 style={{
+              fontFamily: 'Lora, serif',
+              fontSize: '1.1rem', fontWeight: 700,
+              color: 'var(--text)', marginBottom: '16px',
+            }}>
+              Zonas y costos de envío BARF
+            </h3>
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              {[
+                { zone: 'Capital', cost: '$10.000' },
+                { zone: 'San Isidro', cost: '$5.000' },
+                { zone: 'Nordelta', cost: '$5.000' },
+                { zone: 'Escobar', cost: '$5.000' },
+              ].map(({ zone, cost }) => (
+                <span key={zone} style={{
+                  padding: '8px 16px',
+                  backgroundColor: 'var(--accent-light)',
+                  color: 'var(--accent)',
+                  borderRadius: '20px',
+                  fontSize: '0.85rem',
+                  fontWeight: 500,
+                  border: '1px solid var(--accent)',
+                }}>
+                  {zone} · {cost}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -434,7 +554,7 @@ export default function BarfPage() {
             Dale a tu perro la comida que merece
           </h2>
           <p style={{ color: 'var(--text-muted)', lineHeight: 1.75, marginBottom: '28px' }}>
-            Hacemos envíos a Tigre, San Isidro y Escobar.
+            Envíos a Capital, San Isidro, Nordelta y Escobar.
             Pedí tu BARF Mix Completo por WhatsApp o compralo desde la tienda.
           </p>
           <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>

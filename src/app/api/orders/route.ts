@@ -11,10 +11,14 @@ export async function POST(req: NextRequest) {
       subtotal, total, payment_method, notes, items,
     } = body
 
-    if (!customer_name || !customer_phone || !delivery_zone || !delivery_address || !payment_method)
+    if (!customer_name || !customer_phone || !delivery_zone || !payment_method)
       return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
-    if (subtotal < 20000)
-      return NextResponse.json({ error: 'El pedido mínimo es $20.000' }, { status: 400 })
+    const isPickup = delivery_zone === 'retiro'
+    if (!isPickup && !delivery_address)
+      return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
+    const minOrder = isPickup ? 20000 : 100000
+    if (subtotal < minOrder)
+      return NextResponse.json({ error: `El pedido mínimo ${isPickup ? 'para retiro' : 'para envío'} es $${minOrder.toLocaleString('es-AR')}` }, { status: 400 })
     if (!items || items.length === 0)
       return NextResponse.json({ error: 'El carrito está vacío' }, { status: 400 })
 

@@ -3,10 +3,12 @@
 import { useState } from 'react'
 import { useCartStore } from '@/store/cart'
 import { formatPrice } from '@/lib/utils'
-import { DeliveryZone, PaymentMethod, DELIVERY_COSTS, DELIVERY_ZONE_LABELS, MINIMUM_ORDER } from '@/types'
-import { ShoppingBag, Banknote, MapPin, User, Phone, Mail, AlertCircle, CheckCircle, MessageCircle, Copy } from 'lucide-react'
+import { DeliveryZone, PaymentMethod, DELIVERY_COSTS, DELIVERY_ZONE_LABELS, DELIVERY_ZONES, MINIMUM_ORDER_DELIVERY, MINIMUM_ORDER_PICKUP } from '@/types'
+import { ShoppingBag, Banknote, MapPin, User, Phone, Mail, AlertCircle, CheckCircle, MessageCircle, Copy, Truck, Store } from 'lucide-react'
 import toast from 'react-hot-toast'
 import Link from 'next/link'
+
+type DeliveryMethodType = 'envio' | 'retiro' | ''
 
 interface FormData {
   name: string
@@ -14,19 +16,21 @@ interface FormData {
   phone: string
   address: string
   zone: DeliveryZone | ''
+  deliveryMethod: DeliveryMethodType
   payment: PaymentMethod | ''
   notes: string
 }
 
 function buildWhatsAppMessage(orderNumber: number | null, form: FormData, items: { product: { name: string; price: number }; quantity: number }[], total: number) {
+  const isPickup = form.deliveryMethod === 'retiro'
   const lines = [
     `Hola! Hice un pedido${orderNumber ? ` #${orderNumber}` : ''}:`,
     '',
     ...items.map(i => `- ${i.quantity}x ${i.product.name} (${formatPrice(i.product.price * i.quantity)})`),
     '',
     `Total: *${formatPrice(total)}*`,
-    `Zona: ${form.zone ? DELIVERY_ZONE_LABELS[form.zone as DeliveryZone] : ''}`,
-    `Dirección: ${form.address}`,
+    isPickup ? 'Retiro en local' : `Zona: ${form.zone ? DELIVERY_ZONE_LABELS[form.zone as DeliveryZone] : ''}`,
+    ...(isPickup ? [] : [`Dirección: ${form.address}`]),
     '',
     form.payment === 'transferencia'
       ? 'Ya hice la transferencia, adjunto comprobante.'
@@ -44,24 +48,31 @@ export default function CheckoutPage() {
 
   const [form, setForm] = useState<FormData>({
     name: '', email: '', phone: '', address: '',
-    zone: '', payment: '', notes: '',
+    zone: '', deliveryMethod: '', payment: '', notes: '',
   })
 
+  const isPickup = form.deliveryMethod === 'retiro'
+  const effectiveZone: DeliveryZone | '' = isPickup ? 'retiro' : form.zone
   const subtotal = getTotal()
-  const deliveryCost = form.zone ? DELIVERY_COSTS[form.zone as DeliveryZone] : 0
+  const deliveryCost = effectiveZone ? DELIVERY_COSTS[effectiveZone as DeliveryZone] : 0
   const total = subtotal + deliveryCost
+  const minimumOrder = isPickup ? MINIMUM_ORDER_PICKUP : MINIMUM_ORDER_DELIVERY
 
   const [savedItems, setSavedItems] = useState(items)
   const [savedTotal, setSavedTotal] = useState(total)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!form.zone || !form.payment) {
+    if (!form.deliveryMethod || !form.payment) {
       toast.error('Por favor completá todos los campos.')
       return
     }
-    if (subtotal < MINIMUM_ORDER) {
-      toast.error(`El pedido mínimo es ${formatPrice(MINIMUM_ORDER)}`)
+    if (!isPickup && !form.zone) {
+      toast.error('Seleccioná una zona de envío.')
+      return
+    }
+    if (subtotal < minimumOrder) {
+      toast.error(`El pedido mínimo ${isPickup ? 'para retiro' : 'para envío'} es ${formatPrice(minimumOrder)}`)
       return
     }
 
@@ -74,8 +85,8 @@ export default function CheckoutPage() {
           customer_name: form.name,
           customer_email: form.email,
           customer_phone: form.phone,
-          delivery_zone: form.zone,
-          delivery_address: form.address,
+          delivery_zone: effectiveZone,
+          delivery_address: isPickup ? 'Retiro en local' : form.address,
           delivery_cost: deliveryCost,
           subtotal,
           total,
@@ -265,40 +276,94 @@ export default function CheckoutPage() {
                 display: 'block', fontSize: '0.83rem', fontWeight: 600,
                 color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em',
               }}>
-                Zona de envío *
+                Método de entrega *
               </label>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-                {(Object.entries(DELIVERY_ZONE_LABELS) as [DeliveryZone, string][]).map(([key, label]) => (
+              <div style={{ display: 'flex', gap: '10px' }}>
+                {[
+                  { value: 'envio' as DeliveryMethodType, label: 'Envío a domicilio', desc: `Mínimo ${formatPrice(MINIMUM_ORDER_DELIVERY)}`, icon: <Truck size={18} /> },
+                  { value: 'retiro' as DeliveryMethodType, label: 'Retiro en local', desc: `Mínimo ${formatPrice(MINIMUM_ORDER_PICKUP)}`, icon: <Store size={18} /> },
+                ].map(({ value, label, desc, icon }) => (
                   <button
-                    key={key}
+                    key={value}
                     type="button"
-                    onClick={() => setForm(f => ({ ...f, zone: key }))}
+                    onClick={() => setForm(f => ({ ...f, deliveryMethod: value, zone: value === 'retiro' ? '' : f.zone }))}
                     style={{
-                      flex: 1, minWidth: '100px', padding: '10px 8px',
-                      borderRadius: '10px',
-                      border: `1px solid ${form.zone === key ? 'var(--accent)' : 'var(--border)'}`,
-                      backgroundColor: form.zone === key ? 'var(--accent-light)' : 'transparent',
-                      color: form.zone === key ? 'var(--accent)' : 'var(--text-muted)',
-                      cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
-                      fontFamily: 'Outfit, sans-serif', textAlign: 'center',
+                      flex: 1, display: 'flex', alignItems: 'center', gap: '12px',
+                      padding: '14px 14px',
+                      borderRadius: '12px',
+                      border: `1px solid ${form.deliveryMethod === value ? 'var(--accent)' : 'var(--border)'}`,
+                      backgroundColor: form.deliveryMethod === value ? 'var(--accent-light)' : 'transparent',
+                      cursor: 'pointer', textAlign: 'left',
                       transition: 'all 0.2s ease',
+                      fontFamily: 'Outfit, sans-serif',
                     }}
                   >
-                    {label}
-                    <div style={{ fontSize: '0.75rem', fontWeight: 400, marginTop: '2px' }}>
-                      {formatPrice(DELIVERY_COSTS[key])}
+                    <div style={{
+                      color: form.deliveryMethod === value ? 'var(--accent)' : 'var(--text-muted)',
+                      transition: 'color 0.2s ease',
+                    }}>
+                      {icon}
+                    </div>
+                    <div>
+                      <div style={{
+                        fontWeight: 600, fontSize: '0.88rem',
+                        color: form.deliveryMethod === value ? 'var(--accent)' : 'var(--text)',
+                      }}>
+                        {label}
+                      </div>
+                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '2px' }}>
+                        {desc}
+                      </div>
                     </div>
                   </button>
                 ))}
               </div>
             </div>
 
-            <InputField label="Dirección de entrega *" value={form.address}
-              onChange={v => setForm(f => ({ ...f, address: v }))} required
-              placeholder="Calle, número, ciudad" />
+            {form.deliveryMethod === 'envio' && (
+              <>
+                <div style={{ marginBottom: '16px' }}>
+                  <label style={{
+                    display: 'block', fontSize: '0.83rem', fontWeight: 600,
+                    color: 'var(--text-muted)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.05em',
+                  }}>
+                    Zona de envío *
+                  </label>
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {DELIVERY_ZONES.map(key => (
+                      <button
+                        key={key}
+                        type="button"
+                        onClick={() => setForm(f => ({ ...f, zone: key }))}
+                        style={{
+                          flex: 1, minWidth: '100px', padding: '10px 8px',
+                          borderRadius: '10px',
+                          border: `1px solid ${form.zone === key ? 'var(--accent)' : 'var(--border)'}`,
+                          backgroundColor: form.zone === key ? 'var(--accent-light)' : 'transparent',
+                          color: form.zone === key ? 'var(--accent)' : 'var(--text-muted)',
+                          cursor: 'pointer', fontSize: '0.85rem', fontWeight: 600,
+                          fontFamily: 'Outfit, sans-serif', textAlign: 'center',
+                          transition: 'all 0.2s ease',
+                        }}
+                      >
+                        {DELIVERY_ZONE_LABELS[key]}
+                        <div style={{ fontSize: '0.75rem', fontWeight: 400, marginTop: '2px' }}>
+                          {formatPrice(DELIVERY_COSTS[key])}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <InputField label="Dirección de entrega *" value={form.address}
+                  onChange={v => setForm(f => ({ ...f, address: v }))} required
+                  placeholder="Calle, número, ciudad" />
+              </>
+            )}
+
             <InputField label="Notas (opcional)" value={form.notes}
               onChange={v => setForm(f => ({ ...f, notes: v }))}
-              placeholder="Instrucciones de entrega, referencias, etc." />
+              placeholder={isPickup ? 'Indicaciones adicionales' : 'Instrucciones de entrega, referencias, etc.'} />
           </Section>
 
           <Section title="Método de pago" icon={<Banknote size={16} />}>
@@ -360,7 +425,7 @@ export default function CheckoutPage() {
 
           <button
             type="submit"
-            disabled={loading || !form.name || !form.phone || !form.address || !form.zone || !form.payment}
+            disabled={loading || !form.name || !form.phone || !form.deliveryMethod || !form.payment || (!isPickup && (!form.address || !form.zone))}
             style={{
               width: '100%', padding: '15px',
               backgroundColor: loading ? 'var(--border)' : 'var(--accent)',
@@ -418,8 +483,8 @@ export default function CheckoutPage() {
               <div style={{ borderTop: '1px solid var(--border)', paddingTop: '14px', marginTop: '4px' }}>
                 <SummaryRow label="Subtotal" value={formatPrice(subtotal)} />
                 <SummaryRow
-                  label={`Envío${form.zone ? ` (${DELIVERY_ZONE_LABELS[form.zone as DeliveryZone]})` : ''}`}
-                  value={form.zone ? formatPrice(deliveryCost) : '—'}
+                  label={isPickup ? 'Retiro en local' : `Envío${form.zone ? ` (${DELIVERY_ZONE_LABELS[form.zone as DeliveryZone]})` : ''}`}
+                  value={isPickup ? 'Gratis' : (form.zone ? formatPrice(deliveryCost) : '—')}
                 />
                 <div style={{
                   display: 'flex', justifyContent: 'space-between',
@@ -438,7 +503,7 @@ export default function CheckoutPage() {
                 </div>
               </div>
 
-              {subtotal < MINIMUM_ORDER && (
+              {form.deliveryMethod && subtotal < minimumOrder && (
                 <div style={{
                   display: 'flex', gap: '8px', alignItems: 'center',
                   backgroundColor: 'var(--accent-light)',
@@ -447,7 +512,7 @@ export default function CheckoutPage() {
                 }}>
                   <AlertCircle size={13} style={{ color: 'var(--accent)', flexShrink: 0 }} />
                   <p style={{ fontSize: '0.78rem', color: 'var(--text)' }}>
-                    Mínimo: {formatPrice(MINIMUM_ORDER)} (faltan {formatPrice(MINIMUM_ORDER - subtotal)})
+                    Mínimo {isPickup ? 'retiro' : 'envío'}: {formatPrice(minimumOrder)} (faltan {formatPrice(minimumOrder - subtotal)})
                   </p>
                 </div>
               )}

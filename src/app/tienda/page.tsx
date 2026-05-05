@@ -62,7 +62,7 @@ export default function TiendaPage() {
           Nuestra Tienda
         </h1>
         <p style={{ color: 'var(--text-muted)', marginTop: '8px', fontSize: '0.95rem' }}>
-          Pedido mínimo: <strong style={{ color: 'var(--text)' }}>$20.000</strong> · Envíos a Tigre, San Isidro y Escobar
+          Retiro mínimo: <strong style={{ color: 'var(--text)' }}>$20.000</strong> · Envío mínimo: <strong style={{ color: 'var(--text)' }}>$100.000</strong> · Capital, San Isidro y Nordelta
         </p>
       </div>
 

@@ -14,9 +14,10 @@ interface OrderInfo {
 }
 
 const ZONE_LABELS: Record<string, string> = {
-  tigre: 'Tigre',
+  capital: 'Capital',
   san_isidro: 'San Isidro',
-  escobar: 'Escobar',
+  nordelta: 'Nordelta',
+  retiro: 'Retiro en local',
 }
 
 const PAYMENT_LABELS: Record<string, string> = {

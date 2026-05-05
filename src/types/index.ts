@@ -44,21 +44,25 @@ export interface CartItem {
   quantity: number
 }
 
-export type DeliveryZone = 'san_isidro' | 'tigre' | 'escobar'
+export type DeliveryZone = 'capital' | 'san_isidro' | 'nordelta' | 'retiro'
 export type PaymentMethod = 'transferencia' | 'efectivo'
 export type OrderStatus = 'pending' | 'confirmed' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 export type PaymentStatus = 'pending' | 'approved' | 'rejected' | 'cancelled'
 
+export const DELIVERY_ZONES: DeliveryZone[] = ['capital', 'san_isidro', 'nordelta']
+
 export const DELIVERY_COSTS: Record<DeliveryZone, number> = {
-  san_isidro: 3000,
-  tigre: 2000,
-  escobar: 1000,
+  capital: 5000,
+  san_isidro: 5000,
+  nordelta: 5000,
+  retiro: 0,
 }
 
 export const DELIVERY_ZONE_LABELS: Record<DeliveryZone, string> = {
+  capital: 'Capital',
   san_isidro: 'San Isidro',
-  tigre: 'Tigre',
-  escobar: 'Escobar',
+  nordelta: 'Nordelta',
+  retiro: 'Retiro en local',
 }
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
@@ -77,7 +81,8 @@ export const PAYMENT_STATUS_LABELS: Record<PaymentStatus, string> = {
   cancelled: 'Cancelado',
 }
 
-export const MINIMUM_ORDER = 20000
+export const MINIMUM_ORDER_DELIVERY = 100000
+export const MINIMUM_ORDER_PICKUP = 20000
 
 export interface Order {
   id: string
