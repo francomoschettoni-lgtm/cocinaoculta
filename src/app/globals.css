@@ -146,6 +146,10 @@ h1, h2, h3, h4 {
     grid-template-columns: 1fr !important;
     gap: 40px !important;
   }
+  .barf-pricing-grid {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
 }
 
 @media (min-width: 769px) {

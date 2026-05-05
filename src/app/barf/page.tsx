@@ -3,10 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { ArrowRight, Heart, Leaf, ShieldCheck, Sparkles, MessageCircle, Beef, Bone, Salad, Cherry, PawPrint } from 'lucide-react'
+import { ArrowRight, Heart, Leaf, ShieldCheck, Sparkles, MessageCircle, Beef, Bone, Salad, Cherry, PawPrint, ShoppingCart } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { Product } from '@/types'
-import ProductCard from '@/components/store/ProductCard'
+import { useCartStore } from '@/store/cart'
 
 const HERO_IMAGES = [
   '/barf-corgi.png',
@@ -17,6 +17,7 @@ export default function BarfPage() {
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
   const [currentImg, setCurrentImg] = useState(0)
+  const { addItem, updateQuantity, openCart, items } = useCartStore()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-brand', 'barf')
@@ -302,121 +303,166 @@ export default function BarfPage() {
         </div>
       </section>
 
-      {/* ── PRICING + SHIPPING ── */}
+      {/* ── PRICING ── */}
       <section style={{
         padding: '80px 24px',
         position: 'relative', overflow: 'hidden',
       }}>
-        <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-          <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-            <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-              Precios
-            </span>
-            <h2 style={{
-              fontFamily: 'Lora, serif',
-              fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700,
-              color: 'var(--text)', marginTop: '6px',
+        <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+          <div className="barf-pricing-grid" style={{
+            display: 'grid', gridTemplateColumns: '1fr 1.4fr',
+            gap: '48px', alignItems: 'center',
+          }}>
+            {/* Product image */}
+            <div style={{
+              position: 'relative',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              aspectRatio: '4/5',
+              boxShadow: '0 20px 60px rgba(0,0,0,0.15), 0 8px 20px rgba(0,0,0,0.10)',
             }}>
-              Elegí tu pack
-            </h2>
-            <p style={{ color: 'var(--text-muted)', marginTop: '12px', maxWidth: '480px', margin: '12px auto 0', lineHeight: 1.7 }}>
-              Cada unidad es un BARF Mix Completo de 500g sellado al vacío. Mejor precio a mayor cantidad.
-            </p>
-          </div>
+              <Image
+                src="/barf-product-1.jpg"
+                alt="BARF Mix Completo 500g"
+                fill
+                style={{ objectFit: 'cover' }}
+                sizes="(max-width: 768px) 100vw, 40vw"
+              />
+              <div style={{
+                position: 'absolute', bottom: '16px', left: '16px', right: '16px',
+                backgroundColor: 'rgba(15,13,8,0.80)',
+                backdropFilter: 'blur(8px)',
+                borderRadius: '12px',
+                padding: '12px 16px',
+              }}>
+                <p style={{ color: '#F5EFE0', fontSize: '0.9rem', fontWeight: 600 }}>BARF Mix Completo</p>
+                <p style={{ color: 'rgba(212,174,94,0.8)', fontSize: '0.75rem' }}>500g · Sellado al vacío</p>
+              </div>
+            </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '20px', marginBottom: '56px' }}>
+            {/* Packs */}
+            <div>
+              <div style={{ marginBottom: '32px' }}>
+                <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
+                  Precios
+                </span>
+                <h2 style={{
+                  fontFamily: 'Lora, serif',
+                  fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700,
+                  color: 'var(--text)', marginTop: '6px',
+                }}>
+                  Elegí tu pack
+                </h2>
+                <p style={{ color: 'var(--text-muted)', marginTop: '12px', lineHeight: 1.7 }}>
+                  Cada unidad es un BARF Mix Completo de 500g sellado al vacío. Mejor precio a mayor cantidad.
+                </p>
+              </div>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {[
               { units: 5, price: 9000, label: 'Compra mínima', total: 45000 },
               { units: 10, price: 8000, label: 'Caja de 10', total: 80000, featured: true },
               { units: 15, price: 7000, label: 'Caja de 15', total: 105000 },
-            ].map(({ units, price, label, total, featured }) => (
-              <div key={units} style={{
-                backgroundColor: 'var(--bg-card)',
-                border: featured ? '2px solid var(--accent)' : '1px solid var(--border)',
-                borderRadius: '18px',
-                padding: '32px 28px',
-                textAlign: 'center',
-                position: 'relative',
-                boxShadow: featured ? '0 8px 32px rgba(191,155,80,0.15)' : '0 4px 16px rgba(0,0,0,0.06)',
-                transition: 'transform 0.3s ease, box-shadow 0.3s ease',
-              }}
-              onMouseEnter={e => {
-                const el = e.currentTarget as HTMLDivElement
-                el.style.transform = 'translateY(-4px)'
-              }}
-              onMouseLeave={e => {
-                const el = e.currentTarget as HTMLDivElement
-                el.style.transform = 'translateY(0)'
-              }}>
-                {featured && (
-                  <div style={{
-                    position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
-                    backgroundColor: 'var(--accent)', color: 'white',
-                    padding: '3px 14px', borderRadius: '20px',
-                    fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em',
-                  }}>
-                    Más elegido
-                  </div>
-                )}
-                <p style={{
-                  fontFamily: 'Lora, serif',
-                  fontSize: '0.9rem', fontWeight: 600,
-                  color: 'var(--text-muted)', marginBottom: '8px',
-                }}>{label}</p>
-                <p style={{
-                  fontFamily: 'Lora, serif',
-                  fontSize: '2.6rem', fontWeight: 700,
-                  color: 'var(--accent)', lineHeight: 1,
-                }}>
-                  {units}<span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--text-muted)' }}>u</span>
-                </p>
-                <p style={{
-                  fontSize: '1.3rem', fontWeight: 700,
-                  color: 'var(--text)', margin: '12px 0 4px',
-                }}>
-                  ${price.toLocaleString('es-AR')}<span style={{ fontSize: '0.85rem', fontWeight: 400, color: 'var(--text-muted)' }}>/u</span>
-                </p>
-                <p style={{
-                  fontSize: '0.82rem', color: 'var(--text-muted)',
-                }}>
-                  Total: ${total.toLocaleString('es-AR')}
-                </p>
-              </div>
-            ))}
-          </div>
+            ].map(({ units, price, label, total, featured }) => {
+              const barfProduct = products[0]
+              const inCart = barfProduct ? items.find(i => i.product.id === barfProduct.id) : null
 
-          <div style={{
-            backgroundColor: 'var(--bg-card)',
-            border: '1px solid var(--border)',
-            borderRadius: '16px',
-            padding: '28px 32px',
-          }}>
-            <h3 style={{
-              fontFamily: 'Lora, serif',
-              fontSize: '1.1rem', fontWeight: 700,
-              color: 'var(--text)', marginBottom: '16px',
-            }}>
-              Zonas y costos de envío BARF
-            </h3>
-            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-              {[
-                { zone: 'Capital', cost: '$10.000' },
-                { zone: 'San Isidro', cost: '$5.000' },
-                { zone: 'Nordelta', cost: '$5.000' },
-                { zone: 'Escobar', cost: '$5.000' },
-              ].map(({ zone, cost }) => (
-                <span key={zone} style={{
-                  padding: '8px 16px',
-                  backgroundColor: 'var(--accent-light)',
-                  color: 'var(--accent)',
-                  borderRadius: '20px',
-                  fontSize: '0.85rem',
-                  fontWeight: 500,
-                  border: '1px solid var(--accent)',
+              const handleBuyPack = () => {
+                if (!barfProduct) return
+                if (!inCart) addItem(barfProduct)
+                updateQuantity(barfProduct.id, units)
+                openCart()
+              }
+
+              return (
+                <div key={units} style={{
+                  backgroundColor: 'var(--bg-card)',
+                  border: featured ? '2px solid var(--accent)' : '1px solid var(--border)',
+                  borderRadius: '18px',
+                  padding: '32px 28px',
+                  textAlign: 'center',
+                  position: 'relative',
+                  boxShadow: featured ? '0 8px 32px rgba(191,155,80,0.15)' : '0 4px 16px rgba(0,0,0,0.06)',
+                  transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+                }}
+                onMouseEnter={e => {
+                  const el = e.currentTarget as HTMLDivElement
+                  el.style.transform = 'translateY(-4px)'
+                }}
+                onMouseLeave={e => {
+                  const el = e.currentTarget as HTMLDivElement
+                  el.style.transform = 'translateY(0)'
                 }}>
-                  {zone} · {cost}
-                </span>
-              ))}
+                  {featured && (
+                    <div style={{
+                      position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
+                      backgroundColor: 'var(--accent)', color: 'white',
+                      padding: '3px 14px', borderRadius: '20px',
+                      fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.04em',
+                    }}>
+                      Más elegido
+                    </div>
+                  )}
+                  <p style={{
+                    fontFamily: 'Lora, serif',
+                    fontSize: '0.9rem', fontWeight: 600,
+                    color: 'var(--text-muted)', marginBottom: '8px',
+                  }}>{label}</p>
+                  <p style={{
+                    fontFamily: 'Lora, serif',
+                    fontSize: '2.6rem', fontWeight: 700,
+                    color: 'var(--accent)', lineHeight: 1,
+                  }}>
+                    {units}<span style={{ fontSize: '1rem', fontWeight: 500, color: 'var(--text-muted)' }}>u</span>
+                  </p>
+                  <p style={{
+                    fontSize: '1.3rem', fontWeight: 700,
+                    color: 'var(--text)', margin: '12px 0 4px',
+                  }}>
+                    ${price.toLocaleString('es-AR')}<span style={{ fontSize: '0.85rem', fontWeight: 400, color: 'var(--text-muted)' }}>/u</span>
+                  </p>
+                  <p style={{
+                    fontSize: '0.82rem', color: 'var(--text-muted)', marginBottom: '16px',
+                  }}>
+                    Total: ${total.toLocaleString('es-AR')}
+                  </p>
+                  <button
+                    onClick={handleBuyPack}
+                    disabled={!barfProduct}
+                    style={{
+                      display: 'inline-flex', alignItems: 'center', gap: '8px',
+                      padding: '11px 22px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      backgroundColor: featured ? 'var(--accent)' : 'var(--accent-light)',
+                      color: featured ? 'white' : 'var(--accent)',
+                      cursor: barfProduct ? 'pointer' : 'not-allowed',
+                      fontSize: '0.88rem',
+                      fontWeight: 600,
+                      transition: 'background 0.2s ease, transform 0.15s ease',
+                      width: '100%',
+                      justifyContent: 'center',
+                    }}
+                    onMouseEnter={e => {
+                      const btn = e.currentTarget as HTMLButtonElement
+                      btn.style.backgroundColor = 'var(--accent)'
+                      btn.style.color = 'white'
+                      btn.style.transform = 'scale(1.03)'
+                    }}
+                    onMouseLeave={e => {
+                      const btn = e.currentTarget as HTMLButtonElement
+                      btn.style.backgroundColor = featured ? 'var(--accent)' : 'var(--accent-light)'
+                      btn.style.color = featured ? 'white' : 'var(--accent)'
+                      btn.style.transform = 'scale(1)'
+                    }}
+                  >
+                    <ShoppingCart size={15} />
+                    Comprar {units}u
+                  </button>
+                </div>
+              )
+            })}
+              </div>
             </div>
           </div>
         </div>
@@ -503,34 +549,6 @@ export default function BarfPage() {
         </div>
       </section>
 
-      {/* ── PRODUCT FROM DB ── */}
-      {!loading && products.length > 0 && (
-        <section id="productos" style={{
-          padding: '80px 24px',
-        }}>
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '44px' }}>
-              <span style={{ color: 'var(--accent)', fontSize: '0.75rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.12em' }}>
-                Productos BARF
-              </span>
-              <h2 style={{
-                fontFamily: 'Lora, serif',
-                fontSize: 'clamp(2rem, 3.5vw, 2.8rem)', fontWeight: 700,
-                color: 'var(--text)', marginTop: '6px',
-              }}>
-                Comprá directo
-              </h2>
-            </div>
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
-              gap: '24px',
-            }} className="stagger-children">
-              {products.map(p => <ProductCard key={p.id} product={p} />)}
-            </div>
-          </div>
-        </section>
-      )}
 
       {/* ── CTA ── */}
       <section style={{

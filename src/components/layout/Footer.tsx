@@ -67,27 +67,7 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Envíos */}
-          <div>
-            <h4 style={{ fontSize: '0.85rem', fontWeight: 600, color: 'var(--text)', marginBottom: '16px', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Envíos
-            </h4>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-              {[
-                { zone: 'Tigre', price: '$2.000' },
-                { zone: 'San Isidro', price: '$3.000' },
-                { zone: 'Escobar', price: '$1.000' },
-              ].map(({ zone, price }) => (
-                <div key={zone} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem' }}>
-                  <span style={{ color: 'var(--text-muted)' }}>{zone}</span>
-                  <span style={{ color: 'var(--accent)', fontWeight: 600 }}>{price}</span>
-                </div>
-              ))}
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '8px' }}>
-                Pedido mínimo: $20.000
-              </p>
-            </div>
-          </div>
+
 
           {/* Ubicación */}
           <div>
