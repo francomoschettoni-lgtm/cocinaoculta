@@ -38,7 +38,7 @@ export default function ProductCard({ product }: { product: Product }) {
     }}
     >
       {/* Image */}
-      <div style={{ position: 'relative', aspectRatio: '4/3', backgroundColor: 'var(--bg-secondary)' }}>
+      <div style={{ position: 'relative', aspectRatio: '3/4', backgroundColor: 'var(--bg-secondary)' }}>
         {product.image_url ? (
           <Image
             src={product.image_url}
